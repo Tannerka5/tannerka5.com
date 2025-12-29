@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AboutContent from '../components/AboutContent.tsx';
+---
+
+<BaseLayout 
+  title="About | Tanner Atkinson" 
+  description="Information Systems student at BYU Marriott with experience in full-stack development and cloud infrastructure"
+>
+  <AboutContent client:load />
+</BaseLayout>

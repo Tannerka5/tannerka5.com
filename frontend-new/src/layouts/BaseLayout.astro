@@ -1,0 +1,46 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Portfolio of Tanner Atkinson" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="text-2xl font-bold text-gray-800">
+                    Tanner Atkinson
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="/" class="text-gray-700 hover:text-blue-600 transition">Home</a>
+                    <a href="/about" class="text-gray-700 hover:text-blue-600 transition">About</a>
+                    <a href="/projects" class="text-gray-700 hover:text-blue-600 transition">Projects</a>
+                    <a href="/contact" class="text-gray-700 hover:text-blue-600 transition">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <slot />
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8 mt-20">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p>&copy; 2025 Tanner Atkinson. Built with Astro & AWS.</p>
+        </div>
+    </footer>
+</body>
+</html>
