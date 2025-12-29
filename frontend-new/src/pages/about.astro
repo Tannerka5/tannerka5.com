@@ -1,11 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import AboutContent from '../components/AboutContent.tsx';
+import AboutContent from '../components/AboutContent';
 ---
 
-<BaseLayout 
-  title="About | Tanner Atkinson" 
-  description="Information Systems student at BYU Marriott with experience in full-stack development and cloud infrastructure"
->
+<BaseLayout title="About | Tanner Atkinson">
   <AboutContent client:load />
 </BaseLayout>

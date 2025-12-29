@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectDetailHero from '../../components/projects/ProjectDetailHero';
+import ProjectTechStack from '../../components/projects/ProjectTechStack';
+import ProjectOverview from '../../components/projects/ProjectOverview';
+import ProjectChallenges from '../../components/projects/ProjectChallenges';
+import ProjectLearnings from '../../components/projects/ProjectLearnings';
+import ProjectMetrics from '../../components/projects/ProjectMetrics';
+import ProjectMedia from '../../components/projects/ProjectMedia';
+import ProjectNavigation from '../../components/projects/ProjectNavigation';
+import { projects } from '../../../data/projects';
+
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const allSlugs = projects.map((p) => p.slug);
+---
+
+<BaseLayout title={`${project.title} | Tanner Atkinson`}>
+  <ProjectDetailHero
+    client:load
+    title={project.title}
+    role={project.role}
+    timeline={project.timeline}
+    gradientFrom={project.gradientFrom}
+    gradientVia={project.gradientVia}
+    gradientTo={project.gradientTo}
+    logo={project.logo}
+    icon={project.icon}
+    links={project.links}
+  />
+  
+  <ProjectTechStack client:load techStack={project.techStack} />
+  
+  <ProjectOverview
+    client:load
+    fullDescription={project.fullDescription}
+    overview={project.detailed.overview}
+    problem={project.detailed.problem}
+    solution={project.detailed.solution}
+  />
+  
+  <ProjectChallenges client:load challenges={project.detailed.challenges} />
+  
+  <ProjectLearnings
+    client:load
+    learnings={project.detailed.learnings}
+    features={project.detailed.features}
+  />
+  
+  <ProjectMetrics client:load metrics={project.detailed.metrics} />
+  
+  <ProjectMedia client:load media={project.detailed.media} />
+  
+  <ProjectNavigation client:load currentSlug={project.slug} allSlugs={allSlugs} />
+</BaseLayout>

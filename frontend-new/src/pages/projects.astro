@@ -1,8 +1,8 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import ProjectsContent from "../components/ProjectsContent";
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectGrid from '../components/projects/ProjectGrid';
 ---
 
 <BaseLayout title="Projects | Tanner Atkinson">
-  <ProjectsContent client:load />
+  <ProjectGrid client:load />
 </BaseLayout>

@@ -1,194 +1,415 @@
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import type { FC } from "react";
 
-export default function AboutContent() {
-  const fadeInUp = {
-    initial: { opacity: 0, y: 30 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.6 }
-  };
-
+const AboutContent: FC = () => {
   return (
-    <section className="py-20 px-4">
-      <div className="max-w-4xl mx-auto">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-4xl font-bold text-gray-900 mb-8"
-        >
-          About Me
-        </motion.h1>
-        
-        {/* Bio Section */}
-        <motion.div
-          {...fadeInUp}
-          className="bg-white rounded-lg shadow-md p-8 mb-8"
-        >
-          <div className="flex flex-col md:flex-row gap-8">
-            <div className="md:w-1/3">
-              <img 
-                src="/images/profile.jpg" 
-                alt="Tanner Atkinson" 
-                className="rounded-lg w-full"
-              />
-            </div>
-            <div className="md:w-2/3">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Hi, I'm Tanner</h2>
-              <p className="text-gray-700 mb-4">
-                I'm an Information Systems student at BYU Marriott School of Business, graduating in April 2027. 
-                I combine technical expertise in SQL, Tableau, Python, and Django with real-world leadership 
-                experience managing teams of up to 70 volunteers and 60 employees.
-              </p>
-              <p className="text-gray-700 mb-4">
-                I've delivered measurable results by building a customer database system that contributed to a 114% 
-                increase in catering sales in 3 months, launching a live web application to raise community awareness 
-                of missing persons, and managing IT operations for 30+ POS and payment systems in a high-volume 
-                business environment.
-              </p>
-              <p className="text-gray-700 mb-4">
-                My passion lies at the intersection of business and technology—aligning people, processes, and systems 
-                to deliver innovative solutions that drive growth. I'm particularly interested in data analytics, 
-                product management, and cloud infrastructure.
-              </p>
-              <p className="text-gray-700">
-                Outside of tech, I enjoy competitive rock climbing, exploring state and national parks, and discovering 
-                new recipes. I'm fluent in Portuguese and Spanish, having spent two years in Brazil leading community 
-                service projects.
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Skills Section */}
-        <motion.div
-          {...fadeInUp}
-          className="bg-white rounded-lg shadow-md p-8 mb-8"
-        >
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Skills & Technologies</h2>
-          <div className="grid md:grid-cols-3 gap-6">
+    <main className="bg-cream">
+      {/* Hero Section */}
+      <section className="relative py-20 px-4 bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1, duration: 0.6 }}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
             >
-              <h3 className="font-semibold text-gray-900 mb-3">Data & Analytics</h3>
-              <ul className="text-gray-700 space-y-2">
-                <li>• SQL & Database Systems</li>
-                <li>• Tableau & Oracle BI</li>
-                <li>• Advanced Excel & VBA</li>
-                <li>• Data Analysis & Visualization</li>
-              </ul>
+              <h1 className="text-5xl font-display font-bold text-earth mb-6">
+                About Me
+              </h1>
+              <p className="text-xl text-earth/70 leading-relaxed mb-6">
+                I'm a Computer Science student at Brigham Young University with a
+                passion for building scalable web applications and solving complex
+                technical challenges.
+              </p>
+              <p className="text-lg text-earth/70 leading-relaxed mb-6">
+                My journey in software development combines hands-on project
+                experience, cloud infrastructure expertise, and a commitment to
+                writing clean, maintainable code that makes a real impact.
+              </p>
+              <div className="flex gap-4">
+                <motion.a
+                  href="/contact"
+                  whileHover={{ scale: 1.05 }}
+                  className="px-6 py-3 bg-accent text-white rounded-lg font-semibold hover:bg-accent-dark transition-colors"
+                >
+                  Get In Touch
+                </motion.a>
+                <motion.a
+                  href="/resume/tanner-atkinson-resume.pdf"
+                  download
+                  whileHover={{ scale: 1.05 }}
+                  className="px-6 py-3 bg-white text-earth border-2 border-sage rounded-lg font-semibold hover:bg-sage hover:text-white transition-colors"
+                >
+                  Download Resume
+                </motion.a>
+              </div>
             </motion.div>
+      
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.6 }}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative"
             >
-              <h3 className="font-semibold text-gray-900 mb-3">Development</h3>
-              <ul className="text-gray-700 space-y-2">
-                <li>• Python & Django</li>
-                <li>• HTML/CSS/JavaScript</li>
-                <li>• TypeScript & React</li>
-                <li>• Git Version Control</li>
-              </ul>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-            >
-              <h3 className="font-semibold text-gray-900 mb-3">Cloud & Business Tools</h3>
-              <ul className="text-gray-700 space-y-2">
-                <li>• AWS (S3, CloudFront, Lambda)</li>
-                <li>• Networking & Data Comm</li>
-                <li>• Monday CRM</li>
-                <li>• Adobe Acrobat, MS Office</li>
-              </ul>
+              <div className="aspect-square rounded-2xl shadow-2xl overflow-hidden border-4 border-white">
+                <img
+                  src="/images/profile.jpg"
+                  alt="Tanner Atkinson"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {/* Optional decorative gradient overlay */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 pointer-events-none"></div>
             </motion.div>
           </div>
-        </motion.div>
+        </div>
+      </section>
 
-        {/* Experience Section */}
-        <motion.div
-          {...fadeInUp}
-          className="bg-white rounded-lg shadow-md p-8 mb-8"
-        >
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Experience Highlights</h2>
-          
-          <div className="space-y-6">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1, duration: 0.6 }}
-              className="border-l-4 border-blue-600 pl-4"
-            >
-              <h3 className="font-semibold text-gray-900">IT Manager & Team Lead</h3>
-              <p className="text-gray-600">Chick-fil-A • August 2021 - Present</p>
-              <ul className="text-gray-700 mt-2 space-y-1">
-                <li>• Maintain 30+ POS systems, payment terminals, and network infrastructure</li>
-                <li>• Manage 60 staff members and analyze 20+ sales metrics to drive 26.4% sales increase</li>
-                <li>• Implement inventory tracking systems to optimize waste and anticipate materials needs</li>
-              </ul>
-            </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="border-l-4 border-green-600 pl-4"
-            >
-              <h3 className="font-semibold text-gray-900">Catering Director</h3>
-              <p className="text-gray-600">Chick-fil-A • December 2019 - August 2021</p>
-              <ul className="text-gray-700 mt-2 space-y-1">
-                <li>• Achieved 114% sales growth in 3 months through targeted customer engagement</li>
-                <li>• Built customer database system (Monday CRM) to segment and track catering clients</li>
-                <li>• Organized community outreach donating 16,000+ meals to local events</li>
-              </ul>
-            </motion.div>
+      {/* Experience Timeline */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl font-display font-bold text-earth mb-12 text-center"
+          >
+            Experience & Education
+          </motion.h2>
 
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="border-l-4 border-purple-600 pl-4"
-            >
-              <h3 className="font-semibold text-gray-900">Volunteer Representative</h3>
-              <p className="text-gray-600">São Paulo, Brazil • September 2023 - August 2025</p>
-              <ul className="text-gray-700 mt-2 space-y-1">
-                <li>• Led community service projects and trained 70 volunteers in Portuguese and Spanish</li>
-                <li>• Taught Beginner and Advanced English courses to strengthen cross-cultural communication</li>
-              </ul>
-            </motion.div>
+          <div className="space-y-8">
+            {[
+              {
+                title: "Computer Science Student",
+                organization: "Brigham Young University",
+                period: "2022 - Present",
+                location: "Provo, Utah",
+                description: "Pursuing a Bachelor's degree in Computer Science with coursework in database management, web development, data analysis, and software engineering. Maintaining a strong GPA while building real-world projects.",
+                highlights: [
+                  "Database Management & SQL",
+                  "Web Application Development",
+                  "Data Analysis & Visualization",
+                  "Software Engineering Principles",
+                ],
+                type: "education",
+              },
+              {
+                title: "Full-Stack Developer",
+                organization: "Personal Projects & Freelance",
+                period: "2023 - Present",
+                location: "Remote",
+                description: "Developed multiple full-stack web applications for nonprofits and community organizations, focusing on cloud deployment, database design, and user-centered design.",
+                highlights: [
+                  "Built 3+ production applications on AWS",
+                  "Managed databases with 1000+ records",
+                  "Implemented secure authentication systems",
+                  "Deployed scalable cloud infrastructure",
+                ],
+                type: "experience",
+              },
+              {
+                title: "Previous Experience",
+                organization: "Various Roles",
+                period: "2020 - 2022",
+                location: "Dover, Delaware",
+                description: "Developed strong problem-solving, communication, and project management skills through various professional experiences before transitioning to software development.",
+                highlights: [
+                  "Customer service excellence",
+                  "Team collaboration",
+                  "Project coordination",
+                  "Adaptability and quick learning",
+                ],
+                type: "experience",
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="relative pl-8 border-l-4 border-accent"
+              >
+                <div className="absolute -left-3 top-0 w-6 h-6 bg-accent rounded-full border-4 border-white"></div>
+                <div className="bg-cream p-6 rounded-xl">
+                  <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
+                    <div>
+                      <h3 className="text-2xl font-bold text-earth">{item.title}</h3>
+                      <p className="text-lg text-accent font-semibold">
+                        {item.organization}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-earth/70 font-medium">{item.period}</p>
+                      <p className="text-earth/50 text-sm">{item.location}</p>
+                    </div>
+                  </div>
+                  <p className="text-earth/70 mb-4">{item.description}</p>
+                  <ul className="space-y-2">
+                    {item.highlights.map((highlight, i) => (
+                      <li key={i} className="flex items-start gap-2 text-earth/70">
+                        <svg
+                          className="w-5 h-5 text-accent flex-shrink-0 mt-0.5"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        {highlight}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            ))}
           </div>
-        </motion.div>
+        </div>
+      </section>
 
-        {/* Education Section */}
-        <motion.div
-          {...fadeInUp}
-          className="bg-white rounded-lg shadow-md p-8"
-        >
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Education</h2>
-          <div className="border-l-4 border-blue-600 pl-4">
-            <h3 className="font-semibold text-gray-900">Bachelor of Science in Information Systems</h3>
-            <p className="text-gray-600">Brigham Young University - Marriott School of Business</p>
-            <p className="text-gray-500 text-sm mb-2">Expected Graduation: April 2027</p>
-            <p className="text-gray-700 text-sm">
-              Minor in Environmental Science • Member of the Association for Information Systems
+      {/* Skills Deep Dive */}
+      <section className="py-20 px-4 bg-cream">
+        <div className="max-w-6xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl font-display font-bold text-earth mb-12 text-center"
+          >
+            Technical Skills
+          </motion.h2>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {[
+              {
+                category: "Frontend Development",
+                icon: "🎨",
+                skills: [
+                  { name: "React & Hooks", level: 85 },
+                  { name: "Astro", level: 80 },
+                  { name: "Tailwind CSS", level: 90 },
+                  { name: "JavaScript/TypeScript", level: 85 },
+                  { name: "HTML/CSS", level: 95 },
+                ],
+              },
+              {
+                category: "Backend Development",
+                icon: "⚡",
+                skills: [
+                  { name: "Node.js", level: 85 },
+                  { name: "Express.js", level: 85 },
+                  { name: "RESTful APIs", level: 80 },
+                  { name: "Authentication (bcrypt, sessions)", level: 80 },
+                  { name: "Server-side rendering", level: 75 },
+                ],
+              },
+              {
+                category: "Database & Data",
+                icon: "🗄️",
+                skills: [
+                  { name: "PostgreSQL", level: 85 },
+                  { name: "MySQL", level: 85 },
+                  { name: "Database Design & Normalization", level: 90 },
+                  { name: "SQL Query Optimization", level: 80 },
+                  { name: "Data Analysis (Python/pandas)", level: 75 },
+                ],
+              },
+              {
+                category: "Cloud & DevOps",
+                icon: "☁️",
+                skills: [
+                  { name: "AWS (S3, EC2, RDS, EB, CloudFront)", level: 80 },
+                  { name: "Linux/Unix Command Line", level: 85 },
+                  { name: "Git & GitHub", level: 90 },
+                  { name: "CI/CD Basics", level: 70 },
+                  { name: "HTTPS & SSL/TLS", level: 75 },
+                ],
+              },
+            ].map((category, index) => (
+              <motion.div
+                key={category.category}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white p-8 rounded-xl shadow-md"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="text-4xl">{category.icon}</span>
+                  <h3 className="text-2xl font-bold text-earth">
+                    {category.category}
+                  </h3>
+                </div>
+                <div className="space-y-4">
+                  {category.skills.map((skill) => (
+                    <div key={skill.name}>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-earth/80 font-medium">
+                          {skill.name}
+                        </span>
+                        <span className="text-accent font-semibold">
+                          {skill.level}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-cream rounded-full h-2">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${skill.level}%` }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 1, delay: 0.2 }}
+                          className="bg-gradient-to-r from-accent to-primary h-2 rounded-full"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Values & Approach */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl font-display font-bold text-earth mb-12 text-center"
+          >
+            My Approach
+          </motion.h2>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "User-Centered Design",
+                description:
+                  "I build applications with real users in mind, prioritizing accessibility, usability, and intuitive interfaces that solve actual problems.",
+                icon: (
+                  <svg
+                    className="w-8 h-8"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
+                ),
+              },
+              {
+                title: "Clean, Maintainable Code",
+                description:
+                  "I write clear, well-documented code that's easy to understand and maintain, following best practices and design patterns.",
+                icon: (
+                  <svg
+                    className="w-8 h-8"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                    />
+                  </svg>
+                ),
+              },
+              {
+                title: "Continuous Learning",
+                description:
+                  "Technology evolves rapidly. I'm committed to staying current with new tools, frameworks, and best practices through hands-on projects and coursework.",
+                icon: (
+                  <svg
+                    className="w-8 h-8"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    />
+                  </svg>
+                ),
+              },
+            ].map((value, index) => (
+              <motion.div
+                key={value.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="text-center p-6"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-accent/10 text-accent rounded-full mb-4">
+                  {value.icon}
+                </div>
+                <h3 className="text-xl font-bold text-earth mb-3">
+                  {value.title}
+                </h3>
+                <p className="text-earth/70 leading-relaxed">
+                  {value.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-secondary-dark via-primary-dark to-earth-light text-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl font-display font-bold mb-6">
+              Let's Work Together
+            </h2>
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+              I'm actively seeking internship and full-time opportunities where I
+              can contribute to meaningful projects and continue growing as a
+              developer.
             </p>
-            <p className="text-gray-700 text-sm mt-2">
-              <strong>Relevant Coursework:</strong> Database Systems, Business Programming, Data Communications, 
-              Exploratory Data Analysis, Management Communication
-            </p>
-          </div>
-        </motion.div>
-      </div>
-    </section>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <motion.a
+                href="/contact"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-4 bg-white text-primary rounded-lg font-semibold hover:bg-cream transition-colors shadow-lg"
+              >
+                Contact Me
+              </motion.a>
+              <motion.a
+                href="/projects"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-4 bg-transparent text-white border-2 border-white rounded-lg font-semibold hover:bg-white/10 transition-colors"
+              >
+                View My Work
+              </motion.a>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    </main>
   );
-}
+};
+
+export default AboutContent;
