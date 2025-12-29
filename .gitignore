@@ -6,6 +6,11 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Backend
+backend/node_modules/
+backend/dist/
+backend/lambda.zip
+backend/*.log
+
 # Temporary files
-*.log
 *.tmp

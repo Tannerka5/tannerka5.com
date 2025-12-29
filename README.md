@@ -51,6 +51,21 @@ Monthly AWS costs kept under $3 by:
 3. CloudFront automatically distributes changes globally
 4. Typical propagation time: 5-15 minutes
 
+## Development
+
+### Frontend
+
+- cd frontend
+- Edit HTML files directly
+- Upload to S3 when ready
+
+### Backend
+
+- cd backend
+- npm install
+- npm run build # Compile TypeScript
+- npm run deploy # Package for Lambda deployment
+
 ## Author
 
 **Tanner Atkinson**  
