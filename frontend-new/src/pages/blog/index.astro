@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogGrid from '../../components/blog/BlogGrid';
+import AnimatedDivider from '../../components/AnimatedDivider';
+import { blogPosts } from '../../../data/blog-posts';
+
+const publishedPosts = blogPosts.filter(post => post.published);
+---
+
+<BaseLayout 
+  title="Blog | Tanner Atkinson"
+  description="Technical articles and insights on web development, cloud deployment, and software engineering."
+>
+  <BlogGrid client:load posts={publishedPosts} />
+</BaseLayout>

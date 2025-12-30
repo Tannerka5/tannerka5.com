@@ -8,6 +8,7 @@ import ProjectLearnings from '../../components/projects/ProjectLearnings';
 import ProjectMetrics from '../../components/projects/ProjectMetrics';
 import ProjectMedia from '../../components/projects/ProjectMedia';
 import ProjectNavigation from '../../components/projects/ProjectNavigation';
+import AnimatedDivider from '../../components/AnimatedDivider';
 import { projects } from '../../../data/projects';
 
 export function getStaticPaths() {
@@ -34,8 +35,12 @@ const allSlugs = projects.map((p) => p.slug);
     icon={project.icon}
     links={project.links}
   />
-  
+
+  <AnimatedDivider client:load color="#6B9080" />
+
   <ProjectTechStack client:load techStack={project.techStack} />
+
+  <AnimatedDivider client:load color="#2E5266" />
   
   <ProjectOverview
     client:load
@@ -44,18 +49,28 @@ const allSlugs = projects.map((p) => p.slug);
     problem={project.detailed.problem}
     solution={project.detailed.solution}
   />
+
+  <AnimatedDivider client:load color="#6B9080" />
   
   <ProjectChallenges client:load challenges={project.detailed.challenges} />
+
+  <AnimatedDivider client:load color="#2E5266" />
   
   <ProjectLearnings
     client:load
     learnings={project.detailed.learnings}
     features={project.detailed.features}
   />
+
+  <AnimatedDivider client:load color="#6B9080" />
   
   <ProjectMetrics client:load metrics={project.detailed.metrics} />
+
+  <AnimatedDivider client:load color="#2E5266" />
   
   <ProjectMedia client:load media={project.detailed.media} />
+
+  <AnimatedDivider client:load color="#6B9080" />
   
   <ProjectNavigation client:load currentSlug={project.slug} allSlugs={allSlugs} />
 </BaseLayout>

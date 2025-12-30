@@ -1,0 +1,76 @@
+import { motion } from "framer-motion";
+import type { FC } from "react";
+import type { BlogPost } from "../../../data/blog-posts";
+
+interface BlogCardProps {
+  post: BlogPost;
+  delay?: number;
+}
+
+const BlogCard: FC<BlogCardProps> = ({ post, delay = 0 }) => {
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay }}
+      whileHover={{ y: -8, transition: { duration: 0.3 } }}
+      className="group"
+    >
+      <a
+        href={`/blog/${post.slug}`}
+        className="block bg-white dark:bg-dark-card rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-2xl dark:hover:shadow-accent/20 h-full flex flex-col"
+      >
+        {/* Cover Image */}
+        {post.coverImage && (
+          <div className="h-48 overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10">
+            <img
+              src={post.coverImage}
+              alt={post.title}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+            />
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="p-6 flex-1 flex flex-col">
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 mb-3">
+            {post.tags.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className="text-xs px-2 py-1 bg-sage/10 dark:bg-sage/20 text-sage-dark dark:text-sage-light rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          <h3 className="text-xl font-bold text-earth dark:text-dark-text mb-2 group-hover:text-primary dark:group-hover:text-accent transition-colors">
+            {post.title}
+          </h3>
+          
+          <p className="text-earth/70 dark:text-dark-text-secondary text-sm mb-4 flex-1 line-clamp-3">
+            {post.excerpt}
+          </p>
+
+          {/* Meta */}
+          <div className="flex items-center justify-between text-xs text-earth/50 dark:text-dark-text-secondary pt-4 border-t border-cream-dark dark:border-dark-border">
+            <span>{formatDate(post.date)}</span>
+            <span>{post.readTime}</span>
+          </div>
+        </div>
+      </a>
+    </motion.div>
+  );
+};
+
+export default BlogCard;

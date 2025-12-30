@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import type { FC } from "react";
+import ThemeToggle from './ThemeToggle';
 
 interface NavProps {
   currentPath?: string;
@@ -77,6 +78,7 @@ const Navigation: FC<NavProps> = ({ currentPath = "/" }) => {
             >
               Let's Talk
             </motion.a>
+            <ThemeToggle />
           </div>
 
           {/* Mobile Menu Button */}

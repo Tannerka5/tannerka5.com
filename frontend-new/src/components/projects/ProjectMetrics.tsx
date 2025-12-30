@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import type { FC } from "react";
+import AnimatedCounter from "../AnimatedCounter";
 
 interface Metric {
   label: string;
@@ -12,6 +13,18 @@ interface ProjectMetricsProps {
 
 const ProjectMetrics: FC<ProjectMetricsProps> = ({ metrics }) => {
   if (!metrics || metrics.length === 0) return null;
+
+  // Helper function to parse numeric value and suffix
+  const parseMetricValue = (value: string) => {
+    const match = value.match(/^(\d+)(.*)$/);
+    if (match) {
+      return {
+        numericValue: parseInt(match[1]),
+        suffix: match[2] || ""
+      };
+    }
+    return { numericValue: 0, suffix: value };
+  };
 
   return (
     <section className="py-16 px-4 bg-gradient-to-br from-primary to-primary-dark text-white">
@@ -26,21 +39,29 @@ const ProjectMetrics: FC<ProjectMetricsProps> = ({ metrics }) => {
         </motion.h2>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {metrics.map((metric, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="text-center"
-            >
-              <div className="text-4xl md:text-5xl font-display font-bold text-accent mb-2">
-                {metric.value}
-              </div>
-              <div className="text-sm text-white/80">{metric.label}</div>
-            </motion.div>
-          ))}
+          {metrics.map((metric, index) => {
+            const { numericValue, suffix } = parseMetricValue(metric.value);
+            
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="text-center"
+              >
+                <div className="text-4xl md:text-5xl font-display font-bold text-accent mb-2">
+                  {numericValue > 0 ? (
+                    <AnimatedCounter to={numericValue} duration={2} suffix={suffix} />
+                  ) : (
+                    metric.value
+                  )}
+                </div>
+                <div className="text-sm text-white/80">{metric.label}</div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

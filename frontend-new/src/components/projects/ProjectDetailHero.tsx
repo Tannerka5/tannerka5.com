@@ -47,19 +47,13 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
             className="flex justify-center md:justify-start"
           >
             {logo ? (
-              <motion.img
+              <img
                 src={logo}
                 alt={`${title} logo`}
                 className="max-h-64 w-auto drop-shadow-2xl"
-                whileHover={{ scale: 1.05, rotate: 2 }}
-                transition={{ duration: 0.3 }}
               />
             ) : icon === "cloud" ? (
-              <motion.div
-                className="text-cream"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              >
+              <div className="text-cream">
                 <svg
                   className="w-48 h-48 drop-shadow-2xl"
                   fill="none"
@@ -73,7 +67,7 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                     d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
                   />
                 </svg>
-              </motion.div>
+              </div>
             ) : null}
           </motion.div>
 

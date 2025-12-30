@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tannerka5.com/sitemap.xml
