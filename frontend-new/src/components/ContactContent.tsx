@@ -1,6 +1,7 @@
 import type { FC, FormEvent } from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import AnimatedDivider from './AnimatedDivider';
 
 const ContactContent: FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,15 +40,17 @@ const ContactContent: FC = () => {
         </div>
       </section>
 
+      <AnimatedDivider color="#6B9080" />
+
       {/* Contact Section */}
       <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-5 gap-12">
             {/* Contact Form - Takes up 3 columns */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
               className="md:col-span-3"
             >
               <div className="bg-white rounded-2xl shadow-lg p-8 md:p-10">
@@ -60,7 +63,11 @@ const ContactContent: FC = () => {
                   className="space-y-6"
                   onSubmit={handleSubmit}
                 >
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                  >
                     <label
                       htmlFor="name"
                       className="block text-earth font-semibold mb-2"
@@ -75,9 +82,13 @@ const ContactContent: FC = () => {
                       className="w-full px-4 py-3 border-2 border-sage/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
                       placeholder="Your name"
                     />
-                  </div>
+                  </motion.div>
 
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                  >
                     <label
                       htmlFor="email"
                       className="block text-earth font-semibold mb-2"
@@ -92,9 +103,13 @@ const ContactContent: FC = () => {
                       className="w-full px-4 py-3 border-2 border-sage/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
                       placeholder="your.email@example.com"
                     />
-                  </div>
+                  </motion.div>
 
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                  >
                     <label
                       htmlFor="subject"
                       className="block text-earth font-semibold mb-2"
@@ -109,9 +124,13 @@ const ContactContent: FC = () => {
                       className="w-full px-4 py-3 border-2 border-sage/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
                       placeholder="What's this about?"
                     />
-                  </div>
+                  </motion.div>
 
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.6 }}
+                  >
                     <label
                       htmlFor="message"
                       className="block text-earth font-semibold mb-2"
@@ -126,11 +145,14 @@ const ContactContent: FC = () => {
                       className="w-full px-4 py-3 border-2 border-sage/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all resize-none"
                       placeholder="Tell me about your project or inquiry..."
                     ></textarea>
-                  </div>
+                  </motion.div>
 
                   <motion.button
                     type="submit"
                     disabled={isSubmitting}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.7 }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="w-full bg-accent text-white py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-70 shadow-lg hover:shadow-xl"
@@ -168,103 +190,125 @@ const ContactContent: FC = () => {
 
             {/* Contact Info Sidebar - Takes up 2 columns */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
               className="md:col-span-2 space-y-6"
             >
               {/* Contact Info Cards */}
-              <div className="bg-white rounded-2xl shadow-lg p-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="bg-white rounded-2xl shadow-lg p-6"
+              >
                 <h3 className="text-xl font-bold text-earth mb-4">
                   Contact Information
                 </h3>
                 <div className="space-y-4">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                      <svg
-                        className="w-5 h-5 text-accent"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
+                  {[
+                    {
+                      icon: (
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
                           d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                         />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-earth">Email</h4>
-                      <a
-                        href="mailto:koapono@byu.edu"
-                        className="text-earth/70 hover:text-accent transition-colors"
-                      >
-                        koapono@byu.edu
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                      <svg
-                        className="w-5 h-5 text-accent"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
+                      ),
+                      title: "Email",
+                      content: (
+                        <a
+                          href="mailto:koapono@byu.edu"
+                          className="text-earth/70 hover:text-accent transition-colors"
+                        >
+                          koapono@byu.edu
+                        </a>
+                      ),
+                    },
+                    {
+                      icon: (
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
                           d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                         />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-earth">Phone</h4>
-                      <a
-                        href="tel:808.333.0080"
-                        className="text-earth/70 hover:text-accent transition-colors"
+                      ),
+                      title: "Phone",
+                      content: (
+                        <a
+                          href="tel:808.333.0080"
+                          className="text-earth/70 hover:text-accent transition-colors"
+                        >
+                          808.333.0080
+                        </a>
+                      ),
+                    },
+                    {
+                      icon: (
+                        <>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </>
+                      ),
+                      title: "Location",
+                      content: <p className="text-earth/70">Provo, Utah</p>,
+                    },
+                  ].map((item, index) => (
+                    <motion.div
+                      key={item.title}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+                      className="flex items-start gap-4"
+                    >
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{
+                          duration: 0.5,
+                          delay: 0.6 + index * 0.1,
+                          type: "spring",
+                          stiffness: 200,
+                        }}
+                        className="flex-shrink-0 w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center"
                       >
-                        808.333.0080
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                      <svg
-                        className="w-5 h-5 text-accent"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-earth">Location</h4>
-                      <p className="text-earth/70">Provo, Utah</p>
-                    </div>
-                  </div>
+                        <svg
+                          className="w-5 h-5 text-accent"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          {item.icon}
+                        </svg>
+                      </motion.div>
+                      <div>
+                        <h4 className="font-semibold text-earth">{item.title}</h4>
+                        {item.content}
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Social Links Card */}
-              <div className="bg-white rounded-2xl shadow-lg p-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                className="bg-white rounded-2xl shadow-lg p-6"
+              >
                 <h3 className="text-xl font-bold text-earth mb-4">
                   Connect Online
                 </h3>
@@ -273,6 +317,9 @@ const ContactContent: FC = () => {
                     href="https://github.com/tannerka5"
                     target="_blank"
                     rel="noopener noreferrer"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.9, type: "spring", stiffness: 200 }}
                     whileHover={{ scale: 1.1, y: -2 }}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-earth/5 rounded-lg text-earth hover:bg-earth hover:text-white transition-colors"
                     aria-label="GitHub"
@@ -289,6 +336,9 @@ const ContactContent: FC = () => {
                     href="https://linkedin.com/in/tanneratkinson"
                     target="_blank"
                     rel="noopener noreferrer"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 1.0, type: "spring", stiffness: 200 }}
                     whileHover={{ scale: 1.1, y: -2 }}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-accent/5 rounded-lg text-accent hover:bg-accent hover:text-white transition-colors"
                     aria-label="LinkedIn"
@@ -302,12 +352,21 @@ const ContactContent: FC = () => {
                     </svg>
                   </motion.a>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Response Time Card */}
-              <div className="bg-gradient-to-br from-primary-light to-primary text-white rounded-2xl shadow-lg p-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.1 }}
+                whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+                className="bg-gradient-to-br from-primary-light to-primary text-white rounded-2xl shadow-lg p-6"
+              >
                 <div className="flex items-center gap-3 mb-2">
-                  <svg
+                  <motion.svg
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                     className="w-6 h-6"
                     fill="none"
                     stroke="currentColor"
@@ -319,14 +378,14 @@ const ContactContent: FC = () => {
                       strokeWidth={2}
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
-                  </svg>
+                  </motion.svg>
                   <h3 className="text-lg font-bold">Quick Response</h3>
                 </div>
                 <p className="text-white/90 text-sm">
                   I typically respond to messages within 24 hours. Looking forward
                   to connecting with you!
                 </p>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>

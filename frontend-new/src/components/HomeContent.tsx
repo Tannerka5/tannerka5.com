@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
 import type { FC } from "react";
+import AnimatedCounter from './AnimatedCounter';
+import AnimatedDivider from './AnimatedDivider';
+import StaggeredList from './StaggeredList';
 
 const HomeContent: FC = () => {
   return (
@@ -43,9 +46,24 @@ const HomeContent: FC = () => {
           >
             <h1 className="text-5xl md:text-7xl font-display font-bold text-earth mb-6">
               Hi, I'm{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light to-primary">
+              <motion.span
+                className="text-transparent bg-clip-text inline-block"
+                style={{
+                  backgroundImage: "linear-gradient(90deg, #2E5266, #3D6A82, #2E5266)",
+                  backgroundSize: "300% 100%",
+                }}
+                animate={{
+                  backgroundPosition: ["0% 50%", "50% 50%", "100% 50%", "50% 50%", "0% 50%"],
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  times: [0, 0.25, 0.5, 0.75, 1],
+                }}
+              >
                 Tanner Atkinson
-              </span>
+              </motion.span>
             </h1>
           </motion.div>
 
@@ -133,6 +151,8 @@ const HomeContent: FC = () => {
           </svg>
         </motion.div>
       </section>
+      
+      <AnimatedDivider color="#6B9080" />
 
       {/* About Preview Section */}
       <section className="py-20 px-4 bg-white">
@@ -187,29 +207,36 @@ const HomeContent: FC = () => {
               className="grid grid-cols-2 gap-4"
             >
               {[
-                { label: "Projects Built", value: "10+" },
-                { label: "Technologies", value: "15+" },
-                { label: "GitHub Repos", value: "25+" },
-                { label: "Monster Consumed", value: "∞" },
-              ].map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-cream p-6 rounded-xl text-center border border-sage/20"
-                >
-                  <div className="text-3xl font-display font-bold text-accent mb-2">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-earth/70">{stat.label}</div>
-                </motion.div>
-              ))}
+                  { label: "Projects Built", value: 10, suffix: "+" },
+                  { label: "Technologies", value: 15, suffix: "+" },
+                  { label: "GitHub Repos", value: 25, suffix: "+" },
+                  { label: "Monster Consumed", value: "∞", isSpecial: true },
+                ].map((stat, index) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-cream p-6 rounded-xl text-center border border-sage/20"
+                  >
+                    <div className="text-3xl font-display font-bold text-accent mb-2">
+                      {stat.isSpecial ? (
+                        stat.value
+                      ) : (
+                        <AnimatedCounter to={stat.value as number} suffix={stat.suffix} duration={1.5} />
+                      )}
+                    </div>
+                    <div className="text-sm text-earth/70">{stat.label}</div>
+                  </motion.div>
+                ))}
+
             </motion.div>
           </div>
         </div>
       </section>
+
+      <AnimatedDivider color="#6B9080" />
 
       {/* Featured Projects Section */}
       <section className="py-20 px-4 bg-cream">
@@ -338,7 +365,9 @@ const HomeContent: FC = () => {
           </motion.div>
         </div>
       </section>
-        
+
+      <AnimatedDivider color="#6B9080" />
+
       {/* Skills Section */}
       <section className="py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
@@ -380,7 +409,7 @@ const HomeContent: FC = () => {
                 className="bg-cream p-8 rounded-xl border border-sage/20"
               >
                 <h3 className="text-2xl font-bold text-earth mb-4">{category.title}</h3>
-                <ul className="space-y-2">
+                <StaggeredList className="space-y-2" staggerDelay={0.1}>
                   {category.skills.map((skill) => (
                     <li key={skill} className="flex items-center gap-2 text-earth/70">
                       <svg
@@ -397,13 +426,14 @@ const HomeContent: FC = () => {
                       {skill}
                     </li>
                   ))}
-                </ul>
+                </StaggeredList>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
+      <AnimatedDivider color="#6B9080" />
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-secondary-dark via-primary-dark to-earth-light text-white">

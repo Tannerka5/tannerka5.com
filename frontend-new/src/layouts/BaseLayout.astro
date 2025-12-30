@@ -1,5 +1,8 @@
 ---
 import Navigation from '../components/Navigation';
+import PageTransition from '../components/PageTransition';
+import { ViewTransitions } from 'astro:transitions';
+import BackToTop from '../components/BackToTop';
 
 interface Props {
   title: string;
@@ -21,11 +24,14 @@ const currentPath = Astro.url.pathname;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+  <ViewTransitions />
   </head>
   <body class="bg-cream text-earth antialiased">
     <Navigation client:load currentPath={currentPath} />
     <main class="pt-20">
+        <PageTransition client:load>
       <slot />
+        </PageTransition>
     </main>
     <footer class="bg-primary text-white py-12 mt-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,5 +54,6 @@ const currentPath = Astro.url.pathname;
         </div>
       </div>
     </footer>
+    <BackToTop client:load />
   </body>
 </html>

@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
 import type { FC } from "react";
+import AnimatedDivider from './AnimatedDivider';
+import StaggeredList from './StaggeredList';
+import AnimatedCounter from './AnimatedCounter';
 
 const AboutContent: FC = () => {
   return (
@@ -13,23 +16,44 @@ const AboutContent: FC = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-5xl font-display font-bold text-earth mb-6">
+              <motion.h1 
+                className="text-5xl font-display font-bold text-earth mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
                 About Me
-              </h1>
-              <p className="text-xl text-earth/70 leading-relaxed mb-6">
+              </motion.h1>
+              <motion.p 
+                className="text-xl text-earth/70 leading-relaxed mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
                 I'm a Computer Science student at Brigham Young University with a
                 passion for building scalable web applications and solving complex
                 technical challenges.
-              </p>
-              <p className="text-lg text-earth/70 leading-relaxed mb-6">
+              </motion.p>
+              <motion.p 
+                className="text-lg text-earth/70 leading-relaxed mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
                 My journey in software development combines hands-on project
                 experience, cloud infrastructure expertise, and a commitment to
                 writing clean, maintainable code that makes a real impact.
-              </p>
-              <div className="flex gap-4">
+              </motion.p>
+              <motion.div 
+                className="flex gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
                 <motion.a
                   href="/contact"
                   whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   className="px-6 py-3 bg-accent text-white rounded-lg font-semibold hover:bg-accent-dark transition-colors"
                 >
                   Get In Touch
@@ -38,16 +62,17 @@ const AboutContent: FC = () => {
                   href="/resume/tanner-atkinson-resume.pdf"
                   download
                   whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   className="px-6 py-3 bg-white text-earth border-2 border-sage rounded-lg font-semibold hover:bg-sage hover:text-white transition-colors"
                 >
                   Download Resume
                 </motion.a>
-              </div>
+              </motion.div>
             </motion.div>
       
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
@@ -65,6 +90,7 @@ const AboutContent: FC = () => {
         </div>
       </section>
 
+      <AnimatedDivider color="#6B9080" />
 
       {/* Experience Timeline */}
       <section className="py-20 px-4 bg-white">
@@ -128,10 +154,16 @@ const AboutContent: FC = () => {
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: index * 0.15, duration: 0.6 }}
                 className="relative pl-8 border-l-4 border-accent"
               >
-                <div className="absolute -left-3 top-0 w-6 h-6 bg-accent rounded-full border-4 border-white"></div>
+                <motion.div 
+                  className="absolute -left-3 top-0 w-6 h-6 bg-accent rounded-full border-4 border-white"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.15 + 0.3, type: "spring", stiffness: 200 }}
+                />
                 <div className="bg-cream p-6 rounded-xl">
                   <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
                     <div>
@@ -146,7 +178,7 @@ const AboutContent: FC = () => {
                     </div>
                   </div>
                   <p className="text-earth/70 mb-4">{item.description}</p>
-                  <ul className="space-y-2">
+                  <StaggeredList className="space-y-2" staggerDelay={0.08}>
                     {item.highlights.map((highlight, i) => (
                       <li key={i} className="flex items-start gap-2 text-earth/70">
                         <svg
@@ -163,13 +195,15 @@ const AboutContent: FC = () => {
                         {highlight}
                       </li>
                     ))}
-                  </ul>
+                  </StaggeredList>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
+
+      <AnimatedDivider color="#2E5266" />
 
       {/* Skills Deep Dive */}
       <section className="py-20 px-4 bg-cream">
@@ -235,18 +269,32 @@ const AboutContent: FC = () => {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: index * 0.1, duration: 0.6 }}
                 className="bg-white p-8 rounded-xl shadow-md"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="text-4xl">{category.icon}</span>
+                  <motion.span 
+                    className="text-4xl"
+                    initial={{ scale: 0, rotate: -180 }}
+                    whileInView={{ scale: 1, rotate: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 + 0.2, type: "spring", stiffness: 200 }}
+                  >
+                    {category.icon}
+                  </motion.span>
                   <h3 className="text-2xl font-bold text-earth">
                     {category.category}
                   </h3>
                 </div>
                 <div className="space-y-4">
-                  {category.skills.map((skill) => (
-                    <div key={skill.name}>
+                  {category.skills.map((skill, skillIndex) => (
+                    <motion.div 
+                      key={skill.name}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 + skillIndex * 0.05 }}
+                    >
                       <div className="flex justify-between mb-1">
                         <span className="text-earth/80 font-medium">
                           {skill.name}
@@ -255,16 +303,16 @@ const AboutContent: FC = () => {
                           {skill.level}%
                         </span>
                       </div>
-                      <div className="w-full bg-cream rounded-full h-2">
+                      <div className="w-full bg-cream rounded-full h-2 overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           whileInView={{ width: `${skill.level}%` }}
                           viewport={{ once: true }}
-                          transition={{ duration: 1, delay: 0.2 }}
+                          transition={{ duration: 1.2, delay: index * 0.1 + skillIndex * 0.05 + 0.2, ease: "easeOut" }}
                           className="bg-gradient-to-r from-accent to-primary h-2 rounded-full"
                         />
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </motion.div>
@@ -272,6 +320,8 @@ const AboutContent: FC = () => {
           </div>
         </div>
       </section>
+
+      <AnimatedDivider color="#6B9080" />
 
       {/* Values & Approach */}
       <section className="py-20 px-4 bg-white">
@@ -350,15 +400,22 @@ const AboutContent: FC = () => {
             ].map((value, index) => (
               <motion.div
                 key={value.title}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: index * 0.15, duration: 0.6 }}
+                whileHover={{ y: -5, transition: { duration: 0.3 } }}
                 className="text-center p-6"
               >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-accent/10 text-accent rounded-full mb-4">
+                <motion.div 
+                  className="inline-flex items-center justify-center w-16 h-16 bg-accent/10 text-accent rounded-full mb-4"
+                  initial={{ scale: 0, rotate: -180 }}
+                  whileInView={{ scale: 1, rotate: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.15 + 0.2, type: "spring", stiffness: 150 }}
+                >
                   {value.icon}
-                </div>
+                </motion.div>
                 <h3 className="text-xl font-bold text-earth mb-3">
                   {value.title}
                 </h3>
@@ -370,6 +427,8 @@ const AboutContent: FC = () => {
           </div>
         </div>
       </section>
+
+      <AnimatedDivider color="#2E5266" />
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-secondary-dark via-primary-dark to-earth-light text-white">

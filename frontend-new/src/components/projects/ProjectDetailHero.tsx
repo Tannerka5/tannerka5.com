@@ -41,19 +41,25 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Left: Logo/Icon */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             className="flex justify-center md:justify-start"
           >
             {logo ? (
-              <img
+              <motion.img
                 src={logo}
                 alt={`${title} logo`}
                 className="max-h-64 w-auto drop-shadow-2xl"
+                whileHover={{ scale: 1.05, rotate: 2 }}
+                transition={{ duration: 0.3 }}
               />
             ) : icon === "cloud" ? (
-              <div className="text-cream">
+              <motion.div
+                className="text-cream"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              >
                 <svg
                   className="w-48 h-48 drop-shadow-2xl"
                   fill="none"
@@ -67,39 +73,60 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                     d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
                   />
                 </svg>
-              </div>
+              </motion.div>
             ) : null}
           </motion.div>
 
           {/* Right: Title & Meta */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-center md:text-left"
-          >
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-earth mb-4">
+          <div className="text-center md:text-left">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-4xl md:text-5xl font-display font-bold text-earth mb-4"
+            >
               {title}
-            </h1>
-            <div className="flex flex-wrap gap-4 justify-center md:justify-start mb-6">
-              <span className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-earth">
+            </motion.h1>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="flex flex-wrap gap-4 justify-center md:justify-start mb-6"
+            >
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.4, type: "spring", stiffness: 200 }}
+                className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-earth"
+              >
                 {role}
-              </span>
-              <span className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-earth">
+              </motion.span>
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.5, type: "spring", stiffness: 200 }}
+                className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-earth"
+              >
                 {timeline}
-              </span>
-            </div>
+              </motion.span>
+            </motion.div>
 
             {/* Action Links */}
-            <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="flex flex-wrap gap-4 justify-center md:justify-start"
+            >
               {links.live && (
                 <motion.a
                   href={links.live}
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors flex items-center gap-2"
+                  className="px-6 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors flex items-center gap-2 shadow-lg"
                 >
                   <svg
                     className="w-5 h-5"
@@ -122,9 +149,9 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                   href={links.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 bg-earth text-white rounded-lg font-medium hover:bg-earth-light transition-colors flex items-center gap-2"
+                  className="px-6 py-3 bg-earth text-white rounded-lg font-medium hover:bg-earth-light transition-colors flex items-center gap-2 shadow-lg"
                 >
                   <svg
                     className="w-5 h-5"
@@ -136,8 +163,8 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                   View Code
                 </motion.a>
               )}
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
