@@ -22,27 +22,43 @@ const formatDate = (dateString: string) => {
 };
 ---
 
-<BaseLayout title={`${post.title} | Blog`} description={post.excerpt}>
-  <article class="bg-cream dark:bg-gray-900 dark:bg-dark-bg min-h-screen py-20 px-4 transition-colors duration-300">
+<BaseLayout 
+  title={`${post.title} | Blog`} 
+  description={post.excerpt}
+  ogType="article"
+  ogImage={post.coverImage}
+  article={{
+    publishedTime: post.date,
+    author: post.author || "Tanner Atkinson",
+    tags: post.tags
+  }}
+>
+  <article class="bg-cream dark:bg-gray-900 min-h-screen py-20 px-4 transition-colors duration-300">
     <div class="max-w-4xl mx-auto">
       {/* Header */}
       <header class="mb-12">
         <div class="flex flex-wrap gap-2 mb-4">
           {post.tags.map((tag: string) => (
-            <span class="text-xs px-3 py-1 bg-sage/10 dark:bg-sage/20 dark:bg-sage/20 text-sage-dark dark:text-sage-light rounded-full">
+            <span class="text-xs px-3 py-1 bg-sage/10 dark:bg-sage/20 text-sage-dark dark:text-sage-light rounded-full">
               {tag}
             </span>
           ))}
         </div>
         
-        <h1 class="text-4xl md:text-5xl font-display font-bold text-earth dark:text-gray-100 dark:text-dark-text mb-6">
+        <h1 class="text-4xl md:text-5xl font-display font-bold text-earth dark:text-gray-100 mb-6">
           {post.title}
         </h1>
         
-        <div class="flex items-center gap-4 text-earth dark:text-gray-100/70 dark:text-gray-300 dark:text-dark-text-secondary">
+        <div class="flex items-center gap-4 text-earth/70 dark:text-gray-300 text-sm">
           <time datetime={post.date}>{formatDate(post.date)}</time>
           <span>•</span>
           <span>{post.readTime}</span>
+          {post.author && (
+            <>
+              <span>•</span>
+              <span>By {post.author}</span>
+            </>
+          )}
         </div>
       </header>
 
@@ -51,29 +67,57 @@ const formatDate = (dateString: string) => {
         <img
           src={post.coverImage}
           alt={post.title}
-          class="w-full rounded-xl shadow-lg dark:shadow-accent/20 mb-12"
+          class="w-full rounded-xl shadow-lg mb-12"
         />
       )}
 
       {/* Content Placeholder */}
       <div class="prose prose-lg dark:prose-invert max-w-none">
-        <p class="text-xl text-earth dark:text-gray-100/80 dark:text-dark-text-secondary leading-relaxed mb-8">
-          {post.excerpt}
-        </p>
-        
-        <div class="bg-white dark:bg-gray-800 dark:bg-dark-card p-8 rounded-xl border border-sage/10 dark:border-gray-600 dark:border-dark-border">
-          <p class="text-earth dark:text-gray-100/70 dark:text-gray-300 dark:text-dark-text-secondary">
-            Full blog post content coming soon. This will include detailed technical writeups,
-            code examples, architecture diagrams, and lessons learned from building real-world projects.
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl border border-sage/10 dark:border-gray-700 mb-8">
+          <p class="text-lg text-earth/80 dark:text-gray-300 leading-relaxed mb-6">
+            {post.excerpt}
           </p>
+          
+          <div class="space-y-4 text-earth/70 dark:text-gray-400">
+            <p class="text-center italic">
+              📝 Full article content coming soon...
+            </p>
+            <p class="text-sm">
+              This blog post will include detailed technical writeups, code examples, 
+              architecture diagrams, and lessons learned from building real-world projects.
+            </p>
+          </div>
+        </div>
+
+        {/* Related Posts Section */}
+        <div class="mt-12 p-6 bg-cream dark:bg-gray-900 rounded-xl">
+          <h2 class="text-2xl font-bold text-earth dark:text-gray-100 mb-4">Want to Learn More?</h2>
+          <p class="text-earth/70 dark:text-gray-300 mb-4">
+            Check out my projects to see these concepts in action, or get in touch to discuss web development, 
+            cloud architecture, or database design.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <a 
+              href="/projects" 
+              class="px-6 py-3 bg-accent text-white rounded-lg font-semibold hover:bg-accent-dark transition-colors"
+            >
+              View Projects
+            </a>
+            <a 
+              href="/contact" 
+              class="px-6 py-3 bg-white dark:bg-gray-800 text-earth dark:text-gray-100 border-2 border-sage dark:border-gray-600 rounded-lg font-semibold hover:bg-sage hover:text-white dark:hover:bg-gray-700 transition-colors"
+            >
+              Get In Touch
+            </a>
+          </div>
         </div>
       </div>
 
       {/* Back to Blog */}
-      <div class="mt-12 pt-8 border-t border-sage/20 dark:border-gray-700 dark:border-dark-border">
+      <div class="mt-12 pt-8 border-t border-sage/20 dark:border-gray-700">
         <a 
           href="/blog" 
-          class="inline-flex items-center gap-2 text-accent hover:text-accent-dark transition-colors"
+          class="inline-flex items-center gap-2 text-accent hover:text-accent-dark transition-colors font-semibold"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />

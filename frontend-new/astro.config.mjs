@@ -4,6 +4,7 @@ import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
   integrations: [react(), tailwind()],
+  site: 'https://tannerka5.com',
   build: {
     inlineStylesheets: 'auto',
   },

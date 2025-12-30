@@ -22,9 +22,51 @@ const {
   article,
 } = Astro.props;
 
-const siteUrl = 'https://tannerka5.com';
+const siteUrl = 'https://tannerka5.com'; // Update with your actual domain
 const fullCanonical = canonical || `${siteUrl}${Astro.url.pathname}`;
 const fullOgImage = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`;
+
+// Structured Data for Organization/Person
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Tanner Atkinson",
+  "url": siteUrl,
+  "image": `${siteUrl}/images/profile.jpg`,
+  "jobTitle": "Full-Stack Developer",
+  "description": "Computer Science student at BYU specializing in full-stack web development and cloud architecture",
+  "alumniOf": {
+    "@type": "EducationalOrganization",
+    "name": "Brigham Young University"
+  },
+  "knowsAbout": ["Web Development", "Cloud Computing", "Database Design", "Node.js", "React", "AWS"],
+  "sameAs": [
+    "https://github.com/tannerka5",
+    "https://linkedin.com/in/tanneratkinson"
+  ]
+};
+
+// Structured Data for Article (if applicable)
+const articleSchema = article ? {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": title,
+  "description": description,
+  "image": fullOgImage,
+  "datePublished": article.publishedTime,
+  "dateModified": article.modifiedTime || article.publishedTime,
+  "author": {
+    "@type": "Person",
+    "name": article.author || "Tanner Atkinson",
+    "url": siteUrl
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Tanner Atkinson",
+    "url": siteUrl
+  },
+  "keywords": article.tags?.join(', ')
+} : null;
 ---
 
 <!-- Primary Meta Tags -->
@@ -61,3 +103,13 @@ const fullOgImage = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}
 <meta name="robots" content="index, follow" />
 <meta name="googlebot" content="index, follow" />
 <meta name="author" content="Tanner Atkinson" />
+<meta name="language" content="English" />
+<meta name="revisit-after" content="7 days" />
+
+<!-- Structured Data - Person/Organization -->
+<script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+<!-- Structured Data - Article (if applicable) -->
+{articleSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+)}

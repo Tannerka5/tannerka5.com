@@ -49,7 +49,7 @@ const HomeContent: FC = () => {
               <motion.span
                 className="text-transparent bg-clip-text inline-block"
                 style={{
-                  backgroundImage: "linear-gradient(90deg, #2E5266, #3D6A82, #2E5266)",
+                  backgroundImage: "linear-gradient(90deg, #2E5266, #4d85a4ff, #2E5266)",
                   backgroundSize: "300% 100%",
                 }}
                 animate={{

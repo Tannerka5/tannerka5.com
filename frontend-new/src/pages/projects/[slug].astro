@@ -9,6 +9,8 @@ import ProjectMetrics from '../../components/projects/ProjectMetrics';
 import ProjectMedia from '../../components/projects/ProjectMedia';
 import ProjectNavigation from '../../components/projects/ProjectNavigation';
 import AnimatedDivider from '../../components/AnimatedDivider';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ProjectSchema from '../../components/ProjectSchema.astro';
 import { projects } from '../../../data/projects';
 
 export function getStaticPaths() {
@@ -22,7 +24,32 @@ const { project } = Astro.props;
 const allSlugs = projects.map((p) => p.slug);
 ---
 
-<BaseLayout title={`${project.title} | Tanner Atkinson`}>
+<BaseLayout 
+  title={`${project.title} | Projects`}
+  description={project.shortDescription}
+  ogImage={project.logo}
+>
+  <!-- Breadcrumbs -->
+  <div class="bg-cream dark:bg-gray-900 pt-24 pb-4 px-4">
+    <div class="max-w-7xl mx-auto">
+      <Breadcrumbs 
+        items={[
+          { name: 'Projects', path: '/projects' },
+          { name: project.title, path: `/projects/${project.slug}` }
+        ]} 
+      />
+    </div>
+  </div>
+
+  <!-- Structured Data for Project -->
+  <ProjectSchema 
+    title={project.title}
+    description={project.shortDescription}
+    image={project.logo}
+    techStack={project.techStack}
+    url={project.links.live}
+  />
+
   <ProjectDetailHero
     client:load
     title={project.title}
