@@ -16,13 +16,13 @@ const ProjectMedia: FC<ProjectMediaProps> = ({ media }) => {
   if (!media || media.length === 0) return null;
 
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-16 px-4 bg-white dark:bg-gray-800 dark:bg-gray-800">
       <div className="max-w-6xl mx-auto">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-3xl font-display font-bold text-earth mb-12 text-center"
+          className="text-3xl font-display font-bold text-earth dark:text-gray-100 dark:text-gray-100 mb-12 text-center"
         >
           Media & Screenshots
         </motion.h2>
@@ -35,13 +35,13 @@ const ProjectMedia: FC<ProjectMediaProps> = ({ media }) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="bg-cream p-6 rounded-xl"
+              className="bg-cream dark:bg-gray-900 dark:bg-gray-900 p-6 rounded-xl"
             >
               {item.type === 'video' && (
                 <video
                   controls
                   poster={item.thumbnail}
-                  className="w-full rounded-lg shadow-lg mb-4"
+                  className="w-full rounded-lg shadow-lg dark:shadow-accent/20 mb-4"
                 >
                   <source src={item.url} type="video/mp4" />
                   Your browser does not support the video tag.
@@ -51,11 +51,11 @@ const ProjectMedia: FC<ProjectMediaProps> = ({ media }) => {
                 <img
                   src={item.url}
                   alt={item.caption}
-                  className="w-full rounded-lg shadow-lg mb-4"
+                  className="w-full rounded-lg shadow-lg dark:shadow-accent/20 mb-4"
                 />
               )}
               {item.type === 'embed' && (
-                <div className="aspect-video rounded-lg overflow-hidden shadow-lg mb-4">
+                <div className="aspect-video rounded-lg overflow-hidden shadow-lg dark:shadow-accent/20 mb-4">
                   <iframe
                     src={item.url}
                     className="w-full h-full"
@@ -64,7 +64,7 @@ const ProjectMedia: FC<ProjectMediaProps> = ({ media }) => {
                   />
                 </div>
               )}
-              <p className="text-earth/70 text-center italic">{item.caption}</p>
+              <p className="text-earth dark:text-gray-100 dark:text-gray-100/70 text-center italic">{item.caption}</p>
             </motion.div>
           ))}
         </div>

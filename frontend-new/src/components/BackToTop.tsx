@@ -24,7 +24,7 @@ const BackToTop: FC = () => {
       }}
       transition={{ duration: 0.3 }}
       onClick={scrollToTop}
-      className="fixed top-24 right-8 z-50 p-4 bg-accent text-white rounded-full shadow-lg hover:bg-accent-dark transition-colors"
+      className="fixed top-24 right-8 z-50 p-4 bg-accent text-white rounded-full shadow-lg dark:shadow-accent/20 hover:bg-accent-dark transition-colors"
       aria-label="Back to top"
     >
       <svg

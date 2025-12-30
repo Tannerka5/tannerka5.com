@@ -25,9 +25,9 @@ class ErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return this.props.fallback || (
-        <div className="flex items-center justify-center min-h-screen bg-cream dark:bg-dark-bg">
+        <div className="flex items-center justify-center min-h-screen bg-cream dark:bg-gray-900 dark:bg-gray-900 dark:bg-dark-bg">
           <div className="text-center p-8">
-            <h2 className="text-2xl font-bold text-earth dark:text-dark-text mb-4">
+            <h2 className="text-2xl font-bold text-earth dark:text-gray-100 dark:text-gray-100 dark:text-dark-text mb-4">
               Oops! Something went wrong
             </h2>
             <button

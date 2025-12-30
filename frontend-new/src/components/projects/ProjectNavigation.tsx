@@ -16,7 +16,7 @@ const ProjectNavigation: FC<ProjectNavigationProps> = ({
     currentIndex < allSlugs.length - 1 ? allSlugs[currentIndex + 1] : null;
 
   return (
-    <section className="py-12 px-4 bg-cream border-t border-sage/20">
+    <section className="py-12 px-4 bg-cream dark:bg-gray-900 dark:bg-gray-900 border-t border-sage/20 dark:border-gray-700 dark:border-gray-700">
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between items-center">
           {prevSlug ? (

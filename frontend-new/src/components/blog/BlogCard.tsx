@@ -27,7 +27,7 @@ const BlogCard: FC<BlogCardProps> = ({ post, delay = 0 }) => {
     >
       <a
         href={`/blog/${post.slug}`}
-        className="block bg-white dark:bg-dark-card rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-2xl dark:hover:shadow-accent/20 h-full flex flex-col"
+        className="block bg-white dark:bg-gray-800 dark:bg-gray-800 dark:bg-dark-card rounded-xl shadow-md dark:shadow-gray-900 overflow-hidden transition-all duration-300 hover:shadow-2xl dark:hover:shadow-accent/20 h-full flex flex-col"
       >
         {/* Cover Image */}
         {post.coverImage && (
@@ -47,23 +47,23 @@ const BlogCard: FC<BlogCardProps> = ({ post, delay = 0 }) => {
             {post.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="text-xs px-2 py-1 bg-sage/10 dark:bg-sage/20 text-sage-dark dark:text-sage-light rounded-full"
+                className="text-xs px-2 py-1 bg-sage/10 dark:bg-sage/20 dark:bg-sage/20 text-sage-dark dark:text-sage-light rounded-full"
               >
                 {tag}
               </span>
             ))}
           </div>
 
-          <h3 className="text-xl font-bold text-earth dark:text-dark-text mb-2 group-hover:text-primary dark:group-hover:text-accent transition-colors">
+          <h3 className="text-xl font-bold text-earth dark:text-gray-100 dark:text-gray-100 dark:text-dark-text mb-2 group-hover:text-primary dark:group-hover:text-accent transition-colors">
             {post.title}
           </h3>
           
-          <p className="text-earth/70 dark:text-dark-text-secondary text-sm mb-4 flex-1 line-clamp-3">
+          <p className="text-earth dark:text-gray-100 dark:text-gray-100/70 dark:text-dark-text-secondary text-sm mb-4 flex-1 line-clamp-3">
             {post.excerpt}
           </p>
 
           {/* Meta */}
-          <div className="flex items-center justify-between text-xs text-earth/50 dark:text-dark-text-secondary pt-4 border-t border-cream-dark dark:border-dark-border">
+          <div className="flex items-center justify-between text-xs text-earth dark:text-gray-100 dark:text-gray-100/50 dark:text-dark-text-secondary pt-4 border-t dark:border-gray-700 dark:border-dark-border">
             <span>{formatDate(post.date)}</span>
             <span>{post.readTime}</span>
           </div>

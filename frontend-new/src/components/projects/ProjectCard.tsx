@@ -42,7 +42,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
     >
       <a
         href={`/projects/${slug}`}
-        className="block bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-2xl h-full flex flex-col"
+        className="block bg-white dark:bg-gray-800 dark:bg-gray-800 dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900 overflow-hidden transition-all duration-300 hover:shadow-2xl h-full flex flex-col"
       >
         {/* Image/Icon Section */}
         <div
@@ -80,10 +80,10 @@ const ProjectCard: FC<ProjectCardProps> = ({
 
         {/* Content Section */}
         <div className="p-6 flex-1 flex flex-col">
-          <h3 className="text-xl font-bold text-earth mb-2 group-hover:text-primary transition-colors">
+          <h3 className="text-xl font-bold text-earth dark:text-gray-100 dark:text-gray-100 mb-2 group-hover:text-primary transition-colors">
             {title}
           </h3>
-          <p className="text-earth/70 text-sm mb-4 line-clamp-3 flex-1">
+          <p className="text-earth dark:text-gray-100 dark:text-gray-100/70 text-sm mb-4 line-clamp-3 flex-1">
             {shortDescription}
           </p>
 
@@ -97,7 +97,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
                 viewport={{ once: true }}
                 transition={{ delay: delay + index * 0.05 }}
                 whileHover={{ scale: 1.1, y: -2 }}
-                className="bg-sage/10 text-sage-dark text-xs px-3 py-1 rounded-full border border-sage/20 hover:border-sage hover:bg-sage/20 transition-all"
+                className="bg-sage/10 dark:bg-sage/20 text-sage-dark text-xs px-3 py-1 rounded-full border border-sage/20 dark:border-gray-700 dark:border-gray-700 hover:border-sage hover:bg-sage/20 transition-all"
               >
                 {tech}
               </motion.span>
@@ -105,7 +105,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
           </div>
 
           {/* Links */}
-          <div className="flex gap-4 pt-2 border-t border-cream-dark">
+          <div className="flex gap-4 pt-2 border-t dark:border-gray-700">
             <motion.span 
               className="text-accent text-sm font-medium group-hover:text-accent-dark transition-colors flex items-center gap-1"
               whileHover={{ x: 5, transition: { duration: 0.2 } }}
@@ -116,7 +116,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
               </svg>
             </motion.span>
             {links.live && (
-              <span className="text-earth/50 text-xs flex items-center gap-1">
+              <span className="text-earth dark:text-gray-100 dark:text-gray-100/50 text-xs flex items-center gap-1">
                 <svg
                   className="w-4 h-4"
                   fill="none"

@@ -11,7 +11,7 @@ const ProjectLearnings: FC<ProjectLearningsProps> = ({
   features,
 }) => {
   return (
-    <section className="py-16 px-4 bg-cream">
+    <section className="py-16 px-4 bg-cream dark:bg-gray-900 dark:bg-gray-900">
       <div className="max-w-5xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12">
           {/* Key Learnings */}
@@ -20,8 +20,8 @@ const ProjectLearnings: FC<ProjectLearningsProps> = ({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-2xl font-display font-bold text-earth mb-6 flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+            <h2 className="text-2xl font-display font-bold text-earth dark:text-gray-100 dark:text-gray-100 mb-6 flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary dark:bg-primary-dark dark:bg-primary dark:bg-primary-dark-dark/10 rounded-lg flex items-center justify-center">
                 <svg
                   className="w-5 h-5 text-primary"
                   fill="none"
@@ -46,7 +46,7 @@ const ProjectLearnings: FC<ProjectLearningsProps> = ({
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="flex items-start gap-3 text-earth/70"
+                  className="flex items-start gap-3 text-earth dark:text-gray-100 dark:text-gray-100/70"
                 >
                   <svg
                     className="w-5 h-5 text-accent flex-shrink-0 mt-0.5"
@@ -72,7 +72,7 @@ const ProjectLearnings: FC<ProjectLearningsProps> = ({
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            <h2 className="text-2xl font-display font-bold text-earth mb-6 flex items-center gap-3">
+            <h2 className="text-2xl font-display font-bold text-earth dark:text-gray-100 dark:text-gray-100 mb-6 flex items-center gap-3">
               <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
                 <svg
                   className="w-5 h-5 text-accent"
@@ -98,7 +98,7 @@ const ProjectLearnings: FC<ProjectLearningsProps> = ({
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="flex items-start gap-3 text-earth/70"
+                  className="flex items-start gap-3 text-earth dark:text-gray-100 dark:text-gray-100/70"
                 >
                   <svg
                     className="w-5 h-5 text-accent flex-shrink-0 mt-0.5"

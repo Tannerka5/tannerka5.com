@@ -77,7 +77,7 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-4xl md:text-5xl font-display font-bold text-earth mb-4"
+              className="text-4xl md:text-5xl font-display font-bold text-earth dark:text-gray-100 dark:text-gray-100 mb-4"
             >
               {title}
             </motion.h1>
@@ -92,7 +92,7 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.4, type: "spring", stiffness: 200 }}
-                className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-earth"
+                className="px-4 py-2 bg-white dark:bg-gray-800 dark:bg-gray-800/80 backdrop-blur-sm rounded-full text-sm font-medium text-earth dark:text-gray-100 dark:text-gray-100"
               >
                 {role}
               </motion.span>
@@ -100,7 +100,7 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.5, type: "spring", stiffness: 200 }}
-                className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-earth"
+                className="px-4 py-2 bg-white dark:bg-gray-800 dark:bg-gray-800/80 backdrop-blur-sm rounded-full text-sm font-medium text-earth dark:text-gray-100 dark:text-gray-100"
               >
                 {timeline}
               </motion.span>
@@ -120,7 +120,7 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors flex items-center gap-2 shadow-lg"
+                  className="px-6 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors flex items-center gap-2 shadow-lg dark:shadow-accent/20"
                 >
                   <svg
                     className="w-5 h-5"
@@ -145,7 +145,7 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 bg-earth text-white rounded-lg font-medium hover:bg-earth-light transition-colors flex items-center gap-2 shadow-lg"
+                  className="px-6 py-3 bg-earth text-white rounded-lg font-medium hover:bg-earth-light transition-colors flex items-center gap-2 shadow-lg dark:shadow-accent/20"
                 >
                   <svg
                     className="w-5 h-5"

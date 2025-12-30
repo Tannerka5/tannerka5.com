@@ -7,7 +7,7 @@ import { projects } from "../../../data/projects";
 
 const ProjectGrid: FC = () => {
   return (
-    <main className="bg-cream min-h-screen">
+    <main className="bg-cream dark:bg-gray-900 dark:bg-gray-900 min-h-screen">
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5">
         <div className="max-w-7xl mx-auto text-center">
@@ -17,7 +17,7 @@ const ProjectGrid: FC = () => {
             transition={{ duration: 0.6 }}
           >
             <motion.h1 
-              className="text-5xl md:text-6xl font-display font-bold text-earth mb-6"
+              className="text-5xl md:text-6xl font-display font-bold text-earth dark:text-gray-100 dark:text-gray-100 mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
@@ -25,7 +25,7 @@ const ProjectGrid: FC = () => {
               Featured Projects
             </motion.h1>
             <motion.p 
-              className="text-xl text-earth/70 max-w-3xl mx-auto mb-8"
+              className="text-xl text-earth dark:text-gray-100 dark:text-gray-100/70 max-w-3xl mx-auto mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -57,7 +57,7 @@ const ProjectGrid: FC = () => {
                   <div className="text-4xl font-display font-bold text-accent mb-2">
                     <AnimatedCounter to={stat.value} duration={2} suffix={stat.suffix} />
                   </div>
-                  <div className="text-sm text-earth/70 font-medium">
+                  <div className="text-sm text-earth dark:text-gray-100 dark:text-gray-100/70 font-medium">
                     {stat.label}
                   </div>
                 </motion.div>
@@ -96,7 +96,7 @@ const ProjectGrid: FC = () => {
       <AnimatedDivider color="#2E5266" />
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-secondary-dark via-primary-dark to-earth-light text-white">
+      <section className="py-20 px-4 bg-gradient-to-br from-secondary-light via-primary-light to-earth-light dark:from-gray-700 dark:via-gray-900 dark:to-earth text-white transition-colors duration-300">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -115,7 +115,7 @@ const ProjectGrid: FC = () => {
                 href="/contact"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-white text-primary rounded-lg font-semibold hover:bg-cream transition-colors shadow-lg"
+                className="px-8 py-4 bg-white dark:bg-gray-800 dark:bg-gray-800 text-primary rounded-lg font-semibold hover:bg-cream dark:bg-gray-900 dark:bg-gray-900 transition-colors shadow-lg dark:shadow-accent/20"
               >
                 Contact Me
               </motion.a>
@@ -123,7 +123,7 @@ const ProjectGrid: FC = () => {
                 href="/about"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-transparent text-white border-2 border-white rounded-lg font-semibold hover:bg-white/10 transition-colors"
+                className="px-8 py-4 bg-transparent text-white border-2 border-white rounded-lg font-semibold hover:bg-white dark:bg-gray-800 dark:bg-gray-800/10 transition-colors"
               >
                 Learn More About Me
               </motion.a>

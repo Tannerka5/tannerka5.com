@@ -16,7 +16,7 @@ const ContactContent: FC = () => {
   };
 
   return (
-    <main className="bg-cream min-h-screen">
+    <main className="bg-cream dark:bg-gray-900 dark:bg-gray-900 min-h-screen">
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5">
         <div className="max-w-4xl mx-auto text-center">
@@ -24,7 +24,7 @@ const ContactContent: FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-5xl font-display font-bold text-earth mb-6"
+            className="text-5xl font-display font-bold text-earth dark:text-gray-100 dark:text-gray-100 mb-6"
           >
             Let's Connect
           </motion.h1>
@@ -32,7 +32,7 @@ const ContactContent: FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-xl text-earth/70 max-w-2xl mx-auto"
+            className="text-xl text-earth dark:text-gray-100 dark:text-gray-100/70 max-w-2xl mx-auto"
           >
             Have a project in mind, want to collaborate, or just say hi? I'd love
             to hear from you. Fill out the form below or reach out directly.
@@ -53,8 +53,8 @@ const ContactContent: FC = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="md:col-span-3"
             >
-              <div className="bg-white rounded-2xl shadow-lg p-8 md:p-10">
-                <h2 className="text-3xl font-display font-bold text-earth mb-6">
+              <div className="bg-white dark:bg-gray-800 dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-accent/20 p-8 md:p-10">
+                <h2 className="text-3xl font-display font-bold text-earth dark:text-gray-100 dark:text-gray-100 mb-6">
                   Send a Message
                 </h2>
                 <form
@@ -70,7 +70,7 @@ const ContactContent: FC = () => {
                   >
                     <label
                       htmlFor="name"
-                      className="block text-earth font-semibold mb-2"
+                      className="block text-earth dark:text-gray-100 dark:text-gray-100 font-semibold mb-2"
                     >
                       Name
                     </label>
@@ -91,7 +91,7 @@ const ContactContent: FC = () => {
                   >
                     <label
                       htmlFor="email"
-                      className="block text-earth font-semibold mb-2"
+                      className="block text-earth dark:text-gray-100 dark:text-gray-100 font-semibold mb-2"
                     >
                       Email
                     </label>
@@ -112,7 +112,7 @@ const ContactContent: FC = () => {
                   >
                     <label
                       htmlFor="subject"
-                      className="block text-earth font-semibold mb-2"
+                      className="block text-earth dark:text-gray-100 dark:text-gray-100 font-semibold mb-2"
                     >
                       Subject
                     </label>
@@ -133,7 +133,7 @@ const ContactContent: FC = () => {
                   >
                     <label
                       htmlFor="message"
-                      className="block text-earth font-semibold mb-2"
+                      className="block text-earth dark:text-gray-100 dark:text-gray-100 font-semibold mb-2"
                     >
                       Message
                     </label>
@@ -155,7 +155,7 @@ const ContactContent: FC = () => {
                     transition={{ duration: 0.5, delay: 0.7 }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full bg-accent text-white py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-70 shadow-lg hover:shadow-xl"
+                    className="w-full bg-accent text-white py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-70 shadow-lg dark:shadow-accent/20 hover:shadow-xl"
                   >
                     {isSubmitting ? (
                       <span className="flex items-center justify-center gap-2">
@@ -200,9 +200,9 @@ const ContactContent: FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="bg-white rounded-2xl shadow-lg p-6"
+                className="bg-white dark:bg-gray-800 dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-accent/20 p-6"
               >
-                <h3 className="text-xl font-bold text-earth mb-4">
+                <h3 className="text-xl font-bold text-earth dark:text-gray-100 dark:text-gray-100 mb-4">
                   Contact Information
                 </h3>
                 <div className="space-y-4">
@@ -220,7 +220,7 @@ const ContactContent: FC = () => {
                       content: (
                         <a
                           href="mailto:koapono@byu.edu"
-                          className="text-earth/70 hover:text-accent transition-colors"
+                          className="text-earth dark:text-gray-100 dark:text-gray-100/70 hover:text-accent transition-colors"
                         >
                           koapono@byu.edu
                         </a>
@@ -239,7 +239,7 @@ const ContactContent: FC = () => {
                       content: (
                         <a
                           href="tel:808.333.0080"
-                          className="text-earth/70 hover:text-accent transition-colors"
+                          className="text-earth dark:text-gray-100 dark:text-gray-100/70 hover:text-accent transition-colors"
                         >
                           808.333.0080
                         </a>
@@ -263,7 +263,7 @@ const ContactContent: FC = () => {
                         </>
                       ),
                       title: "Location",
-                      content: <p className="text-earth/70">Provo, Utah</p>,
+                      content: <p className="text-earth dark:text-gray-100 dark:text-gray-100/70">Provo, Utah</p>,
                     },
                   ].map((item, index) => (
                     <motion.div
@@ -294,7 +294,7 @@ const ContactContent: FC = () => {
                         </svg>
                       </motion.div>
                       <div>
-                        <h4 className="font-semibold text-earth">{item.title}</h4>
+                        <h4 className="font-semibold text-earth dark:text-gray-100 dark:text-gray-100">{item.title}</h4>
                         {item.content}
                       </div>
                     </motion.div>
@@ -307,9 +307,9 @@ const ContactContent: FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
-                className="bg-white rounded-2xl shadow-lg p-6"
+                className="bg-white dark:bg-gray-800 dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-accent/20 p-6"
               >
-                <h3 className="text-xl font-bold text-earth mb-4">
+                <h3 className="text-xl font-bold text-earth dark:text-gray-100 dark:text-gray-100 mb-4">
                   Connect Online
                 </h3>
                 <div className="flex gap-4">
@@ -321,7 +321,7 @@ const ContactContent: FC = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5, delay: 0.9, type: "spring", stiffness: 200 }}
                     whileHover={{ scale: 1.1, y: -2 }}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-earth/5 rounded-lg text-earth hover:bg-earth hover:text-white transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-earth/5 rounded-lg text-earth dark:text-gray-100 dark:text-gray-100 hover:bg-earth hover:text-white transition-colors"
                     aria-label="GitHub"
                   >
                     <svg
@@ -360,7 +360,7 @@ const ContactContent: FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 1.1 }}
                 whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-                className="bg-gradient-to-br from-primary-light to-primary text-white rounded-2xl shadow-lg p-6"
+                className="bg-gradient-to-br from-primary-light to-primary text-white rounded-2xl shadow-lg dark:shadow-accent/20 p-6"
               >
                 <div className="flex items-center gap-3 mb-2">
                   <motion.svg

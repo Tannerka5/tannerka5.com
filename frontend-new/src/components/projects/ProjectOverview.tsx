@@ -15,7 +15,7 @@ const ProjectOverview: FC<ProjectOverviewProps> = ({
   solution,
 }) => {
   return (
-    <section className="py-16 px-4 bg-cream">
+    <section className="py-16 px-4 bg-cream dark:bg-gray-900 dark:bg-gray-900">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -23,7 +23,7 @@ const ProjectOverview: FC<ProjectOverviewProps> = ({
           viewport={{ once: true }}
           className="mb-12"
         >
-          <p className="text-xl text-earth/80 leading-relaxed">
+          <p className="text-xl text-earth dark:text-gray-100 dark:text-gray-100/80 leading-relaxed">
             {fullDescription}
           </p>
         </motion.div>
@@ -77,7 +77,7 @@ const ProjectOverview: FC<ProjectOverviewProps> = ({
               viewport={{ once: true }}
               transition={{ delay: 0.1 + index * 0.1 }}
               whileHover={{ y: -5, transition: { duration: 0.3 } }}
-              className="bg-white p-6 rounded-xl shadow-sm border border-sage/10 hover:shadow-lg transition-shadow"
+              className="bg-white dark:bg-gray-800 dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-sage/10 dark:border-gray-600 hover:shadow-lg dark:shadow-accent/20 transition-shadow"
             >
               <motion.div 
                 className={`w-12 h-12 bg-${item.color}/10 rounded-lg flex items-center justify-center mb-4`}
@@ -95,8 +95,8 @@ const ProjectOverview: FC<ProjectOverviewProps> = ({
                   {item.icon}
                 </svg>
               </motion.div>
-              <h3 className="text-lg font-bold text-earth mb-3">{item.title}</h3>
-              <p className="text-earth/70 text-sm leading-relaxed">{item.content}</p>
+              <h3 className="text-lg font-bold text-earth dark:text-gray-100 dark:text-gray-100 mb-3">{item.title}</h3>
+              <p className="text-earth dark:text-gray-100 dark:text-gray-100/70 text-sm leading-relaxed">{item.content}</p>
             </motion.div>
           ))}
         </div>

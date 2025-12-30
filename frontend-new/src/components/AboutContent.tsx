@@ -6,7 +6,7 @@ import AnimatedCounter from './AnimatedCounter';
 
 const AboutContent: FC = () => {
   return (
-    <main className="bg-cream">
+    <main className="bg-cream dark:bg-gray-900">
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5">
         <div className="max-w-6xl mx-auto">
@@ -17,7 +17,7 @@ const AboutContent: FC = () => {
               transition={{ duration: 0.8 }}
             >
               <motion.h1 
-                className="text-5xl font-display font-bold text-earth mb-6"
+                className="text-5xl font-display font-bold text-earth dark:text-gray-100 mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
@@ -25,7 +25,7 @@ const AboutContent: FC = () => {
                 About Me
               </motion.h1>
               <motion.p 
-                className="text-xl text-earth/70 leading-relaxed mb-6"
+                className="text-xl text-earth dark:text-gray-100/70 leading-relaxed mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
@@ -35,7 +35,7 @@ const AboutContent: FC = () => {
                 technical challenges.
               </motion.p>
               <motion.p 
-                className="text-lg text-earth/70 leading-relaxed mb-6"
+                className="text-lg text-earth dark:text-gray-100/70 leading-relaxed mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
@@ -63,7 +63,7 @@ const AboutContent: FC = () => {
                   download
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 bg-white text-earth border-2 border-sage rounded-lg font-semibold hover:bg-sage hover:text-white transition-colors"
+                  className="px-6 py-3 bg-white dark:bg-gray-800 text-earth dark:text-gray-100 border-2 border-sage rounded-lg font-semibold hover:bg-sage hover:text-white transition-colors"
                 >
                   Download Resume
                 </motion.a>
@@ -93,13 +93,13 @@ const AboutContent: FC = () => {
       <AnimatedDivider color="#6B9080" />
 
       {/* Experience Timeline */}
-      <section className="py-20 px-4 bg-white">
+      <section className="py-20 px-4 bg-white dark:bg-gray-800">
         <div className="max-w-5xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl font-display font-bold text-earth mb-12 text-center"
+            className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-12 text-center"
           >
             Experience & Education
           </motion.h2>
@@ -164,23 +164,23 @@ const AboutContent: FC = () => {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.15 + 0.3, type: "spring", stiffness: 200 }}
                 />
-                <div className="bg-cream p-6 rounded-xl">
+                <div className="bg-cream dark:bg-gray-900 p-6 rounded-xl">
                   <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
                     <div>
-                      <h3 className="text-2xl font-bold text-earth">{item.title}</h3>
+                      <h3 className="text-2xl font-bold text-earth dark:text-gray-100">{item.title}</h3>
                       <p className="text-lg text-accent font-semibold">
                         {item.organization}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-earth/70 font-medium">{item.period}</p>
-                      <p className="text-earth/50 text-sm">{item.location}</p>
+                      <p className="text-earth dark:text-gray-100/70 font-medium">{item.period}</p>
+                      <p className="text-earth dark:text-gray-100/50 text-sm">{item.location}</p>
                     </div>
                   </div>
-                  <p className="text-earth/70 mb-4">{item.description}</p>
+                  <p className="text-earth dark:text-gray-100/70 mb-4">{item.description}</p>
                   <StaggeredList className="space-y-2" staggerDelay={0.08}>
                     {item.highlights.map((highlight, i) => (
-                      <li key={i} className="flex items-start gap-2 text-earth/70">
+                      <li key={i} className="flex items-start gap-2 text-earth dark:text-gray-100/70">
                         <svg
                           className="w-5 h-5 text-accent flex-shrink-0 mt-0.5"
                           fill="currentColor"
@@ -206,13 +206,13 @@ const AboutContent: FC = () => {
       <AnimatedDivider color="#2E5266" />
 
       {/* Skills Deep Dive */}
-      <section className="py-20 px-4 bg-cream">
+      <section className="py-20 px-4 bg-cream dark:bg-gray-900">
         <div className="max-w-6xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl font-display font-bold text-earth mb-12 text-center"
+            className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-12 text-center"
           >
             Technical Skills
           </motion.h2>
@@ -270,7 +270,7 @@ const AboutContent: FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="bg-white p-8 rounded-xl shadow-md"
+                className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md dark:shadow-gray-900"
               >
                 <div className="flex items-center gap-3 mb-6">
                   <motion.span 
@@ -282,7 +282,7 @@ const AboutContent: FC = () => {
                   >
                     {category.icon}
                   </motion.span>
-                  <h3 className="text-2xl font-bold text-earth">
+                  <h3 className="text-2xl font-bold text-earth dark:text-gray-100">
                     {category.category}
                   </h3>
                 </div>
@@ -296,14 +296,14 @@ const AboutContent: FC = () => {
                       transition={{ delay: index * 0.1 + skillIndex * 0.05 }}
                     >
                       <div className="flex justify-between mb-1">
-                        <span className="text-earth/80 font-medium">
+                        <span className="text-earth dark:text-gray-100/80 font-medium">
                           {skill.name}
                         </span>
                         <span className="text-accent font-semibold">
                           {skill.level}%
                         </span>
                       </div>
-                      <div className="w-full bg-cream rounded-full h-2 overflow-hidden">
+                      <div className="w-full bg-cream dark:bg-gray-900 rounded-full h-2 overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           whileInView={{ width: `${skill.level}%` }}
@@ -324,13 +324,13 @@ const AboutContent: FC = () => {
       <AnimatedDivider color="#6B9080" />
 
       {/* Values & Approach */}
-      <section className="py-20 px-4 bg-white">
+      <section className="py-20 px-4 bg-white dark:bg-gray-800">
         <div className="max-w-6xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl font-display font-bold text-earth mb-12 text-center"
+            className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-12 text-center"
           >
             My Approach
           </motion.h2>
@@ -416,10 +416,10 @@ const AboutContent: FC = () => {
                 >
                   {value.icon}
                 </motion.div>
-                <h3 className="text-xl font-bold text-earth mb-3">
+                <h3 className="text-xl font-bold text-earth dark:text-gray-100 mb-3">
                   {value.title}
                 </h3>
-                <p className="text-earth/70 leading-relaxed">
+                <p className="text-earth dark:text-gray-100/70 leading-relaxed">
                   {value.description}
                 </p>
               </motion.div>
@@ -431,7 +431,7 @@ const AboutContent: FC = () => {
       <AnimatedDivider color="#2E5266" />
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-secondary-dark via-primary-dark to-earth-light text-white">
+      <section className="py-20 px-4 bg-gradient-to-br from-secondary-light via-primary-light to-earth-light dark:from-gray-700 dark:via-gray-900 dark:to-earth text-white transition-colors duration-300">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -451,7 +451,7 @@ const AboutContent: FC = () => {
                 href="/contact"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-white text-primary rounded-lg font-semibold hover:bg-cream transition-colors shadow-lg"
+                className="px-8 py-4 bg-white dark:bg-gray-800 text-primary rounded-lg font-semibold hover:bg-cream dark:bg-gray-900 transition-colors shadow-lg dark:shadow-accent/20"
               >
                 Contact Me
               </motion.a>
@@ -459,7 +459,7 @@ const AboutContent: FC = () => {
                 href="/projects"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-transparent text-white border-2 border-white rounded-lg font-semibold hover:bg-white/10 transition-colors"
+                className="px-8 py-4 bg-transparent text-white border-2 border-white rounded-lg font-semibold hover:bg-white dark:bg-gray-800/10 transition-colors"
               >
                 View My Work
               </motion.a>

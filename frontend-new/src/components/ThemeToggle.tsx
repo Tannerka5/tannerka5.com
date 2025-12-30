@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 
 const ThemeToggle: FC = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // Check for saved theme preference or system preference
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -21,17 +23,26 @@ const ThemeToggle: FC = () => {
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
   };
 
+  // Prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="w-10 h-10 rounded-lg bg-sage/10 dark:bg-sage/20" aria-hidden="true" />
+    );
+  }
+
   return (
     <motion.button
       onClick={toggleTheme}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className="p-2 rounded-lg bg-sage/10 dark:bg-dark-card hover:bg-sage/20 dark:hover:bg-dark-border transition-colors"
-      aria-label="Toggle theme"
+      className="p-2 rounded-lg bg-sage/10 dark:bg-sage/20 hover:bg-sage/20 transition-colors"
+      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
     >
       {theme === 'light' ? (
+        // Moon icon for dark mode
         <svg
-          className="w-5 h-5 text-earth dark:text-dark-text"
+          className="w-6 h-6 text-earth dark:text-gray-100 dark:text-gray-100"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -44,8 +55,9 @@ const ThemeToggle: FC = () => {
           />
         </svg>
       ) : (
+        // Sun icon for light mode
         <svg
-          className="w-5 h-5 text-earth dark:text-dark-text"
+          className="w-6 h-6 text-yellow-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
