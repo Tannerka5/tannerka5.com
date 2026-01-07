@@ -9,7 +9,7 @@ interface BlogGridProps {
 }
 
 const BlogGrid: FC<BlogGridProps> = ({ posts }) => {
-  const allTags = Array.from(new Set(posts.flatMap(post => post.tags)));
+  /* const allTags = Array.from(new Set(posts.flatMap(post => post.tags))); */
 
   return (
     <main className="bg-cream dark:bg-gray-900 dark:bg-gray-900 dark:bg-dark-bg min-h-screen transition-colors duration-300">

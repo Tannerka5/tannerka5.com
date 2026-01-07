@@ -7,6 +7,7 @@ export interface BlogPost {
   tags: string[];
   published: boolean;
   coverImage?: string;
+  author?: string;
 }
 
 export const blogPosts: BlogPost[] = [
@@ -19,6 +20,7 @@ export const blogPosts: BlogPost[] = [
     tags: ['Node.js', 'AWS', 'MySQL', 'Full-Stack'],
     published: true,
     coverImage: '/images/blog/ella-rises-cover.jpg',
+    author: 'Tanner Atkinson',
   },
   {
     slug: 'aws-deployment-guide-elastic-beanstalk',
@@ -28,6 +30,7 @@ export const blogPosts: BlogPost[] = [
     readTime: '6 min read',
     tags: ['AWS', 'DevOps', 'Node.js'],
     published: true,
+    author: 'Tanner Atkinson',
   },
   {
     slug: 'database-normalization-real-world',
@@ -37,5 +40,6 @@ export const blogPosts: BlogPost[] = [
     readTime: '10 min read',
     tags: ['Database', 'SQL', 'MySQL'],
     published: true,
+    author: 'Tanner Atkinson',
   },
 ];

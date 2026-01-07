@@ -6,13 +6,13 @@ import StaggeredList from './StaggeredList';
 
 const HomeContent: FC = () => {
   return (
-    <main className="bg-cream dark:bg-gray-900 dark:bg-gray-900 dark:bg-gray-900 transition-colors duration-300">
+    <main className="bg-cream dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
         {/* Animated Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent opacity-5 dark:opacity-10"></div>
         
-        {/* Floating Shapes */}
+        {/* Floating Shapes - FIXED for mobile */}
         <motion.div
           animate={{
             y: [0, -20, 0],
@@ -23,7 +23,7 @@ const HomeContent: FC = () => {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute top-20 left-10 w-32 h-32 bg-accent/10 dark:bg-accent/20 rounded-full blur-3xl"
+          className="absolute top-20 left-4 md:left-10 w-24 h-24 md:w-32 md:h-32 bg-accent/10 dark:bg-accent/20 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
@@ -35,7 +35,7 @@ const HomeContent: FC = () => {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute bottom-20 right-10 w-40 h-40 bg-primary dark:bg-primary-dark dark:bg-primary dark:bg-primary-dark-dark/10 dark:bg-primary dark:bg-primary-dark dark:bg-primary dark:bg-primary-dark-dark/20 rounded-full blur-3xl"
+          className="absolute bottom-20 right-4 md:right-10 w-32 h-32 md:w-40 md:h-40 bg-primary/10 dark:bg-primary/20 rounded-full blur-3xl"
         />
 
         <div className="relative z-10 max-w-5xl mx-auto text-center">
@@ -44,7 +44,7 @@ const HomeContent: FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-5xl md:text-7xl font-display font-bold text-earth dark:text-gray-100 dark:text-gray-100 dark:text-gray-100 mb-6">
+            <h1 className="text-5xl md:text-7xl font-display font-bold text-earth dark:text-gray-100 mb-6">
               Hi, I'm{" "}
               <motion.span
                 className="text-transparent bg-clip-text inline-block"
@@ -71,7 +71,7 @@ const HomeContent: FC = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl text-earth dark:text-gray-100 dark:text-gray-100/70 dark:text-gray-300 mb-8 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-earth/70 dark:text-gray-300 mb-8 max-w-3xl mx-auto"
           >
             Full-Stack Developer building scalable web applications with cloud
             infrastructure, database design, and modern frameworks.
@@ -87,7 +87,7 @@ const HomeContent: FC = () => {
               href="/projects"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-accent text-white rounded-lg font-semibold shadow-lg dark:shadow-accent/20 hover:bg-accent-dark transition-colors"
+              className="px-8 py-4 bg-accent text-white rounded-lg font-semibold shadow-lg hover:bg-accent-dark transition-colors"
             >
               View My Work
             </motion.a>
@@ -95,7 +95,7 @@ const HomeContent: FC = () => {
               href="/contact"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-white dark:bg-gray-800 dark:bg-gray-800 dark:bg-gray-800 text-earth dark:text-gray-100 dark:text-gray-100 dark:text-gray-100 border-2 border-sage dark:border-gray-600 rounded-lg font-semibold hover:bg-sage hover:text-white dark:hover:bg-gray-700 transition-colors"
+              className="px-8 py-4 bg-white dark:bg-gray-800 text-earth dark:text-gray-100 border-2 border-sage dark:border-gray-600 rounded-lg font-semibold hover:bg-sage hover:text-white dark:hover:bg-gray-700 transition-colors"
             >
               Get In Touch
             </motion.a>
@@ -122,7 +122,7 @@ const HomeContent: FC = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.7 + index * 0.1 }}
-                className="px-4 py-2 bg-white dark:bg-gray-800 dark:bg-gray-800/80 dark:bg-gray-800/80 backdrop-blur-sm text-earth dark:text-gray-100 dark:text-gray-100/70 dark:text-gray-300 rounded-full text-sm font-medium border border-sage/20 dark:border-gray-700 dark:border-gray-700 dark:border-gray-600"
+                className="px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-earth/70 dark:text-gray-300 rounded-full text-sm font-medium border border-sage/20 dark:border-gray-600"
               >
                 {tech}
               </motion.span>
@@ -137,7 +137,7 @@ const HomeContent: FC = () => {
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
         >
           <svg
-            className="w-6 h-6 text-earth dark:text-gray-100 dark:text-gray-100/50 dark:text-gray-500"
+            className="w-6 h-6 text-earth/50 dark:text-gray-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -155,7 +155,7 @@ const HomeContent: FC = () => {
       <AnimatedDivider color="#6B9080" />
 
       {/* About Preview Section */}
-      <section className="py-20 px-4 bg-white dark:bg-gray-800 dark:bg-gray-800 dark:bg-gray-800 transition-colors duration-300">
+      <section className="py-20 px-4 bg-white dark:bg-gray-800 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -164,15 +164,15 @@ const HomeContent: FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 dark:text-gray-100 dark:text-gray-100 mb-6">
+              <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-6">
                 Building with Purpose
               </h2>
-              <p className="text-earth dark:text-gray-100 dark:text-gray-100/70 dark:text-gray-300 text-lg leading-relaxed mb-6">
-                I'm a Computer Science student at BYU specializing in full-stack
-                development and cloud architecture. I love turning complex problems
+              <p className="text-earth/70 dark:text-gray-300 text-lg leading-relaxed mb-6">
+                I'm an Information Systems student at BYU specializing in product management 
+                and full-stack development. I love turning complex problems
                 into elegant, scalable solutions.
               </p>
-              <p className="text-earth dark:text-gray-100 dark:text-gray-100/70 dark:text-gray-300 text-lg leading-relaxed mb-8">
+              <p className="text-earth/70 dark:text-gray-300 text-lg leading-relaxed mb-8">
                 From nonprofit management systems to community emergency platforms,
                 I build applications that make a real impact while pushing my
                 technical skills forward.
@@ -218,7 +218,7 @@ const HomeContent: FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-cream dark:bg-gray-900 dark:bg-gray-900 dark:bg-gray-900 p-6 rounded-xl text-center border border-sage/20 dark:border-gray-700 dark:border-gray-700 dark:border-gray-700"
+                  className="bg-cream dark:bg-gray-900 p-6 rounded-xl text-center border border-sage/20 dark:border-gray-700"
                 >
                   <div className="text-3xl font-display font-bold text-accent mb-2">
                     {stat.isSpecial ? (
@@ -227,7 +227,7 @@ const HomeContent: FC = () => {
                       <AnimatedCounter to={stat.value as number} suffix={stat.suffix} duration={1.5} />
                     )}
                   </div>
-                  <div className="text-sm text-earth dark:text-gray-100 dark:text-gray-100/70 dark:text-gray-400">{stat.label}</div>
+                  <div className="text-sm text-earth/70 dark:text-gray-400">{stat.label}</div>
                 </motion.div>
               ))}
             </motion.div>
@@ -238,7 +238,7 @@ const HomeContent: FC = () => {
       <AnimatedDivider color="#6B9080" />
 
       {/* Featured Projects Section */}
-      <section className="py-20 px-4 bg-cream dark:bg-gray-900 dark:bg-gray-900 dark:bg-gray-900 transition-colors duration-300">
+      <section className="py-20 px-4 bg-cream dark:bg-gray-900 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -246,10 +246,10 @@ const HomeContent: FC = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 dark:text-gray-100 dark:text-gray-100 mb-4">
+            <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-4">
               Featured Projects
             </h2>
-            <p className="text-earth dark:text-gray-100 dark:text-gray-100/70 dark:text-gray-300 text-lg max-w-2xl mx-auto">
+            <p className="text-earth/70 dark:text-gray-300 text-lg max-w-2xl mx-auto">
               A selection of recent work showcasing full-stack development, cloud
               architecture, and database design.
             </p>
@@ -261,7 +261,7 @@ const HomeContent: FC = () => {
                 title: "Ella Rises",
                 description: "Nonprofit management platform with event tracking and analytics",
                 tech: ["Node.js", "MySQL", "AWS"],
-                color: "from-pink-100 to-purple-100",
+                color: "from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30",
                 link: "/projects/ella-rises",
                 logo: "/images/ellarises-logo.png",
               },
@@ -269,7 +269,7 @@ const HomeContent: FC = () => {
                 title: "NeighborAid",
                 description: "Community emergency preparedness and resource sharing",
                 tech: ["Express", "HTTPS", "Leaflet"],
-                color: "from-blue-50 to-sky-100",
+                color: "from-blue-50 to-sky-100 dark:from-blue-900/30 dark:to-sky-900/30",
                 link: "/projects/neighboraid",
                 logo: "/images/neighboraid-logo.png",
               },
@@ -277,7 +277,7 @@ const HomeContent: FC = () => {
                 title: "Cloud Portfolio",
                 description: "Scalable portfolio on AWS with global CDN",
                 tech: ["Astro", "S3", "CloudFront"],
-                color: "from-primary to-secondary",
+                color: "from-primary to-secondary dark:from-primary-dark dark:to-secondary-dark",
                 link: "/projects/cloud-portfolio",
                 isCloud: true,
               },
@@ -290,7 +290,7 @@ const HomeContent: FC = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="group bg-white dark:bg-gray-800 dark:bg-gray-800 dark:bg-gray-800 rounded-xl p-6 shadow-md dark:shadow-gray-900 hover:shadow-xl dark:hover:shadow-accent/20 transition-all"
+                className="group bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md hover:shadow-xl dark:hover:shadow-accent/20 transition-all"
               >
                 <div
                   className={`h-32 bg-gradient-to-br ${project.color} rounded-lg mb-4 flex items-center justify-center p-4`}
@@ -317,15 +317,15 @@ const HomeContent: FC = () => {
                     />
                   )}
                 </div>
-                <h3 className="text-xl font-bold text-earth dark:text-gray-100 dark:text-gray-100 dark:text-gray-100 mb-2 group-hover:text-accent transition-colors">
+                <h3 className="text-xl font-bold text-earth dark:text-gray-100 mb-2 group-hover:text-accent transition-colors">
                   {project.title}
                 </h3>
-                <p className="text-earth dark:text-gray-100 dark:text-gray-100/70 dark:text-gray-300 text-sm mb-4">{project.description}</p>
+                <p className="text-earth/70 dark:text-gray-300 text-sm mb-4">{project.description}</p>
                 <div className="flex flex-wrap gap-2">
                   {project.tech.map((tech) => (
                     <span
                       key={tech}
-                      className="text-xs px-2 py-1 bg-sage/10 dark:bg-sage/20 dark:bg-sage/20 text-sage-dark dark:text-sage-light rounded-full"
+                      className="text-xs px-2 py-1 bg-sage/10 dark:bg-sage/20 text-sage-dark dark:text-sage-light rounded-full"
                     >
                       {tech}
                     </span>
@@ -344,7 +344,7 @@ const HomeContent: FC = () => {
             <motion.a
               href="/projects"
               whileHover={{ scale: 1.05 }}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary dark:bg-primary-dark dark:bg-primary dark:bg-primary-dark-dark dark:bg-primary dark:bg-primary-dark dark:bg-primary dark:bg-primary-dark-dark-light text-white rounded-lg font-semibold hover:bg-primary dark:bg-primary-dark dark:bg-primary dark:bg-primary-dark-dark-dark transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-primary dark:bg-primary-light text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors"
             >
               View All Projects
               <svg
@@ -368,7 +368,7 @@ const HomeContent: FC = () => {
       <AnimatedDivider color="#6B9080" />
 
       {/* Skills Section */}
-      <section className="py-20 px-4 bg-white dark:bg-gray-800 dark:bg-gray-800 dark:bg-gray-800 transition-colors duration-300">
+      <section className="py-20 px-4 bg-white dark:bg-gray-800 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -376,10 +376,10 @@ const HomeContent: FC = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 dark:text-gray-100 dark:text-gray-100 mb-4">
+            <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-4">
               Skills & Technologies
             </h2>
-            <p className="text-earth dark:text-gray-100 dark:text-gray-100/70 dark:text-gray-300 text-lg">
+            <p className="text-earth/70 dark:text-gray-300 text-lg">
               Tools and technologies I work with regularly
             </p>
           </motion.div>
@@ -405,12 +405,12 @@ const HomeContent: FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-cream dark:bg-gray-900 dark:bg-gray-900 dark:bg-gray-900 p-8 rounded-xl border border-sage/20 dark:border-gray-700 dark:border-gray-700 dark:border-gray-700"
+                className="bg-cream dark:bg-gray-900 p-8 rounded-xl border border-sage/20 dark:border-gray-700"
               >
-                <h3 className="text-2xl font-bold text-earth dark:text-gray-100 dark:text-gray-100 dark:text-gray-100 mb-4">{category.title}</h3>
+                <h3 className="text-2xl font-bold text-earth dark:text-gray-100 mb-4">{category.title}</h3>
                 <StaggeredList className="space-y-2" staggerDelay={0.1}>
                   {category.skills.map((skill) => (
-                    <li key={skill} className="flex items-center gap-2 text-earth dark:text-gray-100 dark:text-gray-100/70 dark:text-gray-300">
+                    <li key={skill} className="flex items-center gap-2 text-earth/70 dark:text-gray-300">
                       <svg
                         className="w-4 h-4 text-accent"
                         fill="currentColor"
@@ -435,7 +435,7 @@ const HomeContent: FC = () => {
       <AnimatedDivider color="#6B9080" />
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-secondary-light via-primary-light to-earth-light dark:from-gray-700 dark:via-gray-900 dark:to-earth text-white transition-colors duration-300">
+      <section className="py-20 px-4 bg-gradient-to-br from-secondary-light via-primary-light to-earth-light dark:from-gray-800 dark:via-gray-900 dark:to-gray-950 text-white transition-colors duration-300">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -453,7 +453,7 @@ const HomeContent: FC = () => {
               href="/contact"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-block px-8 py-4 bg-white dark:bg-gray-800 dark:bg-gray-800 text-primary rounded-lg font-semibold hover:bg-cream dark:bg-gray-900 dark:bg-gray-900 transition-colors shadow-lg dark:shadow-accent/20"
+              className="inline-block px-8 py-4 bg-white text-primary rounded-lg font-semibold hover:bg-cream transition-colors shadow-lg"
             >
               Start a Conversation
             </motion.a>

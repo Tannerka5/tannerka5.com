@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import type { FC } from "react";
 
 interface ProjectDetailHeroProps {
@@ -28,12 +29,65 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
   icon,
   links,
 }) => {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    // Check if dark mode is active
+    setIsDark(document.documentElement.classList.contains('dark'));
+    
+    // Watch for dark mode changes
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    });
+    
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+    
+    return () => observer.disconnect();
+  }, []);
+
+  // Extract color values and create dark mode variants
+  const getGradientClasses = () => {
+    if (isDark) {
+      // Convert light gradients to dark variants
+      const darkFrom = gradientFrom
+        .replace('from-pink-100', 'from-pink-900/40')
+        .replace('from-pink-200', 'from-pink-900/40')
+        .replace('from-purple-100', 'from-purple-900/40')
+        .replace('from-blue-50', 'from-blue-900/40')
+        .replace('from-blue-100', 'from-blue-900/40')
+        .replace('from-sky-100', 'from-sky-900/40')
+        .replace('from-primary', 'from-primary-dark');
+      
+      const darkVia = gradientVia
+        .replace('via-pink-200', 'via-purple-900/40')
+        .replace('via-pink-100', 'via-purple-900/40')
+        .replace('via-purple-100', 'via-purple-900/40')
+        .replace('via-blue-100', 'via-sky-900/40')
+        .replace('via-sky-100', 'via-sky-900/40')
+        .replace('via-primary-light', 'via-primary');
+      
+      const darkTo = gradientTo
+        .replace('to-purple-100', 'to-purple-900/40')
+        .replace('to-pink-100', 'to-pink-900/40')
+        .replace('to-sky-100', 'to-sky-900/40')
+        .replace('to-blue-100', 'to-blue-900/40')
+        .replace('to-secondary', 'to-secondary-dark');
+      
+      return `${darkFrom} ${darkVia} ${darkTo}`;
+    }
+    
+    return `${gradientFrom} ${gradientVia} ${gradientTo}`;
+  };
+
   return (
     <section
-      className={`relative bg-gradient-to-br ${gradientFrom} ${gradientVia} ${gradientTo} py-20 px-4 overflow-hidden`}
+      className={`relative bg-gradient-to-br ${getGradientClasses()} py-20 px-4 overflow-hidden transition-colors duration-300`}
     >
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10 dark:opacity-5">
         <div className="absolute inset-0 bg-grid-pattern"></div>
       </div>
 
@@ -53,7 +107,7 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                 className="max-h-64 w-auto drop-shadow-2xl"
               />
             ) : icon === "cloud" ? (
-              <div className="text-cream">
+              <div className="text-cream dark:text-white">
                 <svg
                   className="w-48 h-48 drop-shadow-2xl"
                   fill="none"
@@ -77,7 +131,7 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-4xl md:text-5xl font-display font-bold text-earth dark:text-gray-100 dark:text-gray-100 mb-4"
+              className="text-4xl md:text-5xl font-display font-bold text-earth dark:text-white mb-4"
             >
               {title}
             </motion.h1>
@@ -92,7 +146,7 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.4, type: "spring", stiffness: 200 }}
-                className="px-4 py-2 bg-white dark:bg-gray-800 dark:bg-gray-800/80 backdrop-blur-sm rounded-full text-sm font-medium text-earth dark:text-gray-100 dark:text-gray-100"
+                className="px-4 py-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full text-sm font-medium text-earth dark:text-gray-100"
               >
                 {role}
               </motion.span>
@@ -100,7 +154,7 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.5, type: "spring", stiffness: 200 }}
-                className="px-4 py-2 bg-white dark:bg-gray-800 dark:bg-gray-800/80 backdrop-blur-sm rounded-full text-sm font-medium text-earth dark:text-gray-100 dark:text-gray-100"
+                className="px-4 py-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full text-sm font-medium text-earth dark:text-gray-100"
               >
                 {timeline}
               </motion.span>
@@ -120,7 +174,7 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors flex items-center gap-2 shadow-lg dark:shadow-accent/20"
+                  className="px-6 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors flex items-center gap-2 shadow-lg"
                 >
                   <svg
                     className="w-5 h-5"
@@ -145,7 +199,7 @@ const ProjectDetailHero: FC<ProjectDetailHeroProps> = ({
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 bg-earth text-white rounded-lg font-medium hover:bg-earth-light transition-colors flex items-center gap-2 shadow-lg dark:shadow-accent/20"
+                  className="px-6 py-3 bg-earth dark:bg-gray-700 text-white rounded-lg font-medium hover:bg-earth-light dark:hover:bg-gray-600 transition-colors flex items-center gap-2 shadow-lg"
                 >
                   <svg
                     className="w-5 h-5"

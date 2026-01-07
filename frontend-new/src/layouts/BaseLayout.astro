@@ -10,13 +10,20 @@ interface Props {
   description?: string;
   ogImage?: string;
   ogType?: 'website' | 'article';
+  article?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    author?: string;
+    tags?: string[];
+  };
 }
 
 const { 
   title, 
   description = "Full-stack developer and Computer Science student specializing in cloud-based web applications.",
   ogImage,
-  ogType = 'website'
+  ogType = 'website',
+  article
 } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
@@ -33,6 +40,7 @@ const currentPath = Astro.url.pathname;
       description={description}
       ogImage={ogImage}
       ogType={ogType}
+      article={article}
     />
 
     <!-- Favicon -->
@@ -68,14 +76,14 @@ const currentPath = Astro.url.pathname;
 
     <ViewTransitions />
   </head>
-  <body class="bg-cream dark:bg-gray-900 dark:bg-gray-900 text-earth dark:text-gray-100 dark:text-gray-100 antialiased transition-colors duration-300">
+  <body class="bg-cream dark:bg-gray-900 text-earth dark:text-gray-100 antialiased transition-colors duration-300">
     <Navigation client:load currentPath={currentPath} />
     <main class="pt-20">
       <PageTransition client:load>
         <slot />
       </PageTransition>
     </main>
-    <footer class="bg-primary dark:bg-primary-dark dark:bg-primary dark:bg-primary-dark-dark dark:bg-gray-950 text-white py-12 mt-20 transition-colors duration-300">
+    <footer class="bg-primary dark:bg-gray-950 text-white py-12 mt-20 transition-colors duration-300">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row justify-between items-center">
           <p class="text-sm text-white/80">

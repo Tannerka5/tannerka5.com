@@ -30,7 +30,7 @@ const AboutContent: FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
               >
-                I'm a Computer Science student at Brigham Young University with a
+                I'm an Information Systems student at Brigham Young University with a
                 passion for building scalable web applications and solving complex
                 technical challenges.
               </motion.p>

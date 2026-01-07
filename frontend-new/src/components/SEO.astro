@@ -107,9 +107,9 @@ const articleSchema = article ? {
 <meta name="revisit-after" content="7 days" />
 
 <!-- Structured Data - Person/Organization -->
-<script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(personSchema)} />
 
 <!-- Structured Data - Article (if applicable) -->
 {articleSchema && (
-  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
 )}
