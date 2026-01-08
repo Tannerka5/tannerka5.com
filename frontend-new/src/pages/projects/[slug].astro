@@ -51,7 +51,7 @@ const allSlugs = projects.map((p) => p.slug);
   />
 
   <ProjectDetailHero
-    client:load
+    client:visible
     title={project.title}
     role={project.role}
     timeline={project.timeline}
@@ -63,41 +63,41 @@ const allSlugs = projects.map((p) => p.slug);
     links={project.links}
   />
 
-  <AnimatedDivider client:load color="#6B9080" />
+  <AnimatedDivider client:visible color="#6B9080" />
 
-  <ProjectTechStack client:load techStack={project.techStack} />
+  <ProjectTechStack client:visible techStack={project.techStack} />
 
-  <AnimatedDivider client:load color="#2E5266" />
+  <AnimatedDivider client:visible color="#2E5266" />
   
   <ProjectOverview
-    client:load
+    client:visible
     fullDescription={project.fullDescription}
     overview={project.detailed.overview}
     problem={project.detailed.problem}
     solution={project.detailed.solution}
   />
 
-  <AnimatedDivider client:load color="#6B9080" />
+  <AnimatedDivider client:visible color="#6B9080" />
   
-  <ProjectChallenges client:load challenges={project.detailed.challenges} />
+  <ProjectChallenges client:visible challenges={project.detailed.challenges} />
 
-  <AnimatedDivider client:load color="#2E5266" />
+  <AnimatedDivider client:visible color="#2E5266" />
   
   <ProjectLearnings
-    client:load
+    client:visible
     learnings={project.detailed.learnings}
     features={project.detailed.features}
   />
 
-  <AnimatedDivider client:load color="#6B9080" />
+  <AnimatedDivider client:visible color="#6B9080" />
   
-  <ProjectMetrics client:load metrics={project.detailed.metrics} />
+  <ProjectMetrics client:visible metrics={project.detailed.metrics} />
 
-  <AnimatedDivider client:load color="#2E5266" />
+  <AnimatedDivider client:visible color="#2E5266" />
   
-  <ProjectMedia client:load media={project.detailed.media} />
+  <ProjectMedia client:visible media={project.detailed.media} />
 
-  <AnimatedDivider client:load color="#6B9080" />
+  <AnimatedDivider client:visible color="#6B9080" />
   
-  <ProjectNavigation client:load currentSlug={project.slug} allSlugs={allSlugs} />
+  <ProjectNavigation client:visible currentSlug={project.slug} allSlugs={allSlugs} />
 </BaseLayout>

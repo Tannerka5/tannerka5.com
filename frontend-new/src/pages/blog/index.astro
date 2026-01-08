@@ -10,5 +10,5 @@ const publishedPosts = blogPosts.filter(post => post.published);
   title="Blog | Tanner Atkinson"
   description="Technical articles and insights on web development, cloud deployment, and software engineering."
 >
-  <BlogGrid client:load posts={publishedPosts} />
+  <BlogGrid client:visible posts={publishedPosts} />
 </BaseLayout>

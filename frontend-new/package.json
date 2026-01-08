@@ -9,7 +9,7 @@
     "astro": "astro",
     "analyze": "astro build --analyze",
     "lighthouse": "lhci autorun",
-    "deploy": "deploy.bat"
+    "deploy": "bash deploy.sh"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
