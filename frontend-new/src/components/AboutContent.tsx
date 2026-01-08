@@ -81,6 +81,10 @@ const AboutContent: FC = () => {
                   src="/images/profile.jpg"
                   alt="Tanner Atkinson"
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  fetchPriority="low"
+                  width="400"
+                  height="400"
                 />
               </div>
               {/* Optional decorative gradient overlay */}

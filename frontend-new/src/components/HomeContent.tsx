@@ -1,16 +1,117 @@
 import { motion } from "framer-motion";
 import type { FC } from "react";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState, useEffect, useMemo } from "react";
 
 // Lazy load heavy components
 const AnimatedCounter = lazy(() => import('./AnimatedCounter'));
 const AnimatedDivider = lazy(() => import('./AnimatedDivider'));
 const StaggeredList = lazy(() => import('./StaggeredList'));
 
-// Detect mobile for conditional animations
-const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+// Memoized data arrays
+const TECH_STACK = [
+  "Node.js",
+  "React",
+  "AWS",
+  "PostgreSQL",
+  "Express",
+  "Astro",
+  "Tailwind",
+] as const;
+
+type ProjectItem = 
+  | { title: string; description: string; tech: string[]; color: string; link: string; logo: string }
+  | { title: string; description: string; tech: string[]; color: string; link: string; isCloud: true };
+
+const FEATURED_PROJECTS: ProjectItem[] = [
+  {
+    title: "Ella Rises",
+    description: "Nonprofit management platform with event tracking and analytics",
+    tech: ["Node.js", "MySQL", "AWS"],
+    color: "from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30",
+    link: "/projects/ella-rises",
+    logo: "/images/ellarises-logo.png",
+  },
+  {
+    title: "NeighborAid",
+    description: "Community emergency preparedness and resource sharing",
+    tech: ["Express", "HTTPS", "Leaflet"],
+    color: "from-blue-50 to-sky-100 dark:from-blue-900/30 dark:to-sky-900/30",
+    link: "/projects/neighboraid",
+    logo: "/images/neighboraid-logo.png",
+  },
+  {
+    title: "Cloud Portfolio",
+    description: "Scalable portfolio on AWS with global CDN",
+    tech: ["Astro", "S3", "CloudFront"],
+    color: "from-primary to-secondary dark:from-primary-dark dark:to-secondary-dark",
+    link: "/projects/cloud-portfolio",
+    isCloud: true,
+  },
+];
+
+type StatItem = 
+  | { label: string; value: number; suffix: string }
+  | { label: string; value: string; isSpecial: true };
+
+const STATS: StatItem[] = [
+  { label: "Projects Built", value: 10, suffix: "+" },
+  { label: "Technologies", value: 15, suffix: "+" },
+  { label: "GitHub Repos", value: 25, suffix: "+" },
+  { label: "Monster Consumed", value: "∞", isSpecial: true },
+];
+
+const SKILL_CATEGORIES = [
+  {
+    title: "Frontend",
+    skills: ["React", "Astro", "Tailwind CSS", "Framer Motion", "EJS"],
+  },
+  {
+    title: "Backend",
+    skills: ["Node.js", "Express", "PostgreSQL", "MySQL", "REST APIs"],
+  },
+  {
+    title: "Cloud & DevOps",
+    skills: ["AWS (S3, EC2, RDS, EB)", "CloudFront", "Git/GitHub", "Linux"],
+  },
+] as const;
 
 const HomeContent: FC = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+
+  useEffect(() => {
+    let ticking = false;
+    const checkMobile = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsMobile(window.innerWidth < 768);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    checkMobile();
+    
+    // Check for reduced motion preference
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    const handleChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    
+    // Defer animations to next frame to prevent initial lag
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setShouldAnimate(true);
+      });
+    });
+    
+    window.addEventListener('resize', checkMobile, { passive: true });
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
   return (
     <main className="bg-cream dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden">
       {/* Hero Section */}
@@ -20,35 +121,37 @@ const HomeContent: FC = () => {
         
         {/* Floating Shapes - OPTIMIZED for mobile */}
         <motion.div
-          animate={{
-            y: [0, -20, 0],
-            rotate: [0, 5, 0],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
+          {...(prefersReducedMotion ? {} : {
+            animate: {
+              y: [0, -20, 0],
+              rotate: [0, 5, 0],
+            },
+            transition: {
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }
+          })}
           className="absolute top-20 left-4 md:left-10 w-24 h-24 md:w-32 md:h-32 bg-accent/10 dark:bg-accent/20 rounded-full blur-3xl will-change-transform"
         />
         <motion.div
-          animate={{
-            y: [0, 20, 0],
-            rotate: [0, -5, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
+          {...(prefersReducedMotion ? {} : {
+            animate: {
+              y: [0, 20, 0],
+              rotate: [0, -5, 0],
+            },
+            transition: {
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }
+          })}
           className="absolute bottom-20 right-4 md:right-10 w-32 h-32 md:w-40 md:h-40 bg-primary/10 dark:bg-primary/20 rounded-full blur-3xl will-change-transform"
         />
 
         <div className="relative z-10 max-w-5xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            {...(prefersReducedMotion || !shouldAnimate ? {} : { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.7, ease: "easeOut" } })}
           >
             <h1 className="text-5xl md:text-7xl font-display font-bold text-earth dark:text-gray-100 mb-6">
               Hi, I'm{" "}
@@ -58,15 +161,17 @@ const HomeContent: FC = () => {
                   backgroundImage: "linear-gradient(90deg, #2E5266, #4d85a4ff, #2E5266)",
                   backgroundSize: "300% 100%",
                 }}
-                animate={!isMobile ? {
-                  backgroundPosition: ["0% 50%", "50% 50%", "100% 50%", "50% 50%", "0% 50%"],
-                } : {}}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  times: [0, 0.25, 0.5, 0.75, 1],
-                }}
+                {...(prefersReducedMotion || isMobile ? {} : {
+                  animate: {
+                    backgroundPosition: ["0% 50%", "50% 50%", "100% 50%", "50% 50%", "0% 50%"],
+                  },
+                  transition: {
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    times: [0, 0.25, 0.5, 0.75, 1],
+                  }
+                })}
               >
                 Tanner Atkinson
               </motion.span>
@@ -74,9 +179,7 @@ const HomeContent: FC = () => {
           </motion.div>
 
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            {...(prefersReducedMotion || !shouldAnimate ? {} : { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.7, delay: 0.15, ease: "easeOut" } })}
             className="text-xl md:text-2xl text-earth/70 dark:text-gray-300 mb-8 max-w-3xl mx-auto"
           >
             Full-Stack Developer building scalable web applications with cloud
@@ -84,9 +187,7 @@ const HomeContent: FC = () => {
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            {...(prefersReducedMotion || !shouldAnimate ? {} : { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.7, delay: 0.3, ease: "easeOut" } })}
             className="flex flex-wrap gap-4 justify-center mb-12"
           >
             <motion.a
@@ -109,37 +210,23 @@ const HomeContent: FC = () => {
 
           {/* Tech Stack Pills */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            {...(prefersReducedMotion || !shouldAnimate ? {} : { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.7, delay: 0.4, ease: "easeOut" } })}
             className="flex flex-wrap gap-3 justify-center"
           >
-            {[
-              "Node.js",
-              "React",
-              "AWS",
-              "PostgreSQL",
-              "Express",
-              "Astro",
-              "Tailwind",
-            ].map((tech, index) => (
-              <motion.span
+            {TECH_STACK.map((tech, index) => (
+              <span
                 key={tech}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.7 + index * 0.1 }}
                 className="px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-earth/70 dark:text-gray-300 rounded-full text-sm font-medium border border-sage/20 dark:border-gray-600"
               >
                 {tech}
-              </motion.span>
+              </span>
             ))}
           </motion.div>
         </div>
 
         {/* Scroll Indicator */}
         <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
+          {...(prefersReducedMotion || !shouldAnimate ? {} : { animate: { y: [0, 10, 0] }, transition: { duration: 2, repeat: Infinity, ease: "easeInOut" } })}
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2 will-change-transform"
         >
           <svg
@@ -167,10 +254,7 @@ const HomeContent: FC = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "100px" }}
-              transition={{ duration: 0.8 }}
+                {...(prefersReducedMotion || !shouldAnimate ? {} : { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true, margin: "50px" }, transition: { duration: 0.6, ease: "easeOut" } })}
             >
               <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-6">
                 Building with Purpose
@@ -208,37 +292,25 @@ const HomeContent: FC = () => {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "100px" }}
-              transition={{ duration: 0.8 }}
+                {...(prefersReducedMotion || !shouldAnimate ? {} : { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true, margin: "50px" }, transition: { duration: 0.6, ease: "easeOut" } })}
               className="grid grid-cols-2 gap-4"
             >
-              {[
-                { label: "Projects Built", value: 10, suffix: "+" },
-                { label: "Technologies", value: 15, suffix: "+" },
-                { label: "GitHub Repos", value: 25, suffix: "+" },
-                { label: "Monster Consumed", value: "∞", isSpecial: true },
-              ].map((stat, index) => (
-                <motion.div
+              {STATS.map((stat) => (
+                <div
                   key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "100px" }}
-                  transition={{ delay: index * 0.1 }}
                   className="bg-cream dark:bg-gray-900 p-6 rounded-xl text-center border border-sage/20 dark:border-gray-700"
                 >
                   <div className="text-3xl font-display font-bold text-accent mb-2">
-                    {stat.isSpecial ? (
+                    {'isSpecial' in stat ? (
                       stat.value
                     ) : (
                       <Suspense fallback={<span>{stat.value}{stat.suffix}</span>}>
-                        <AnimatedCounter to={stat.value as number} suffix={stat.suffix} duration={1.5} />
+                        <AnimatedCounter to={stat.value} suffix={stat.suffix} duration={1.5} />
                       </Suspense>
                     )}
                   </div>
                   <div className="text-sm text-earth/70 dark:text-gray-400">{stat.label}</div>
-                </motion.div>
+                </div>
               ))}
             </motion.div>
           </div>
@@ -253,9 +325,7 @@ const HomeContent: FC = () => {
       <section className="py-20 px-4 bg-cream dark:bg-gray-900 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "100px" }}
+            {...(prefersReducedMotion ? {} : { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "100px" } })}
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-4">
@@ -268,46 +338,17 @@ const HomeContent: FC = () => {
           </motion.div>
                 
           <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {[
-              {
-                title: "Ella Rises",
-                description: "Nonprofit management platform with event tracking and analytics",
-                tech: ["Node.js", "MySQL", "AWS"],
-                color: "from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30",
-                link: "/projects/ella-rises",
-                logo: "/images/ellarises-logo.png",
-              },
-              {
-                title: "NeighborAid",
-                description: "Community emergency preparedness and resource sharing",
-                tech: ["Express", "HTTPS", "Leaflet"],
-                color: "from-blue-50 to-sky-100 dark:from-blue-900/30 dark:to-sky-900/30",
-                link: "/projects/neighboraid",
-                logo: "/images/neighboraid-logo.png",
-              },
-              {
-                title: "Cloud Portfolio",
-                description: "Scalable portfolio on AWS with global CDN",
-                tech: ["Astro", "S3", "CloudFront"],
-                color: "from-primary to-secondary dark:from-primary-dark dark:to-secondary-dark",
-                link: "/projects/cloud-portfolio",
-                isCloud: true,
-              },
-            ].map((project, index) => (
+            {FEATURED_PROJECTS.map((project, index) => (
               <motion.a
                 key={project.title}
                 href={project.link}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "150px" }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
+                {...(prefersReducedMotion || !shouldAnimate ? {} : { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true, margin: "50px" }, transition: { duration: 0.6, delay: index * 0.1, ease: "easeOut" }, whileHover: { y: -5 } })}
                 className="group bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md hover:shadow-xl dark:hover:shadow-accent/20 transition-all"
               >
                 <div
                   className={`h-32 bg-gradient-to-br ${project.color} rounded-lg mb-4 flex items-center justify-center p-4`}
                 >
-                  {project.isCloud ? (
+                  {'isCloud' in project ? (
                     <svg
                       className="w-20 h-20 text-cream dark:text-white"
                       fill="none"
@@ -321,13 +362,16 @@ const HomeContent: FC = () => {
                         d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
                       />
                     </svg>
-                  ) : (
+                  ) : 'logo' in project ? (
                     <img
                       src={project.logo}
                       alt={`${project.title} logo`}
                       className="max-h-24 w-auto"
+                      loading="lazy"
+                      width="96"
+                      height="96"
                     />
-                  )}
+                  ) : null}
                 </div>
                 <h3 className="text-xl font-bold text-earth dark:text-gray-100 mb-2 group-hover:text-accent transition-colors">
                   {project.title}
@@ -348,9 +392,7 @@ const HomeContent: FC = () => {
           </div>
         
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+                {...(prefersReducedMotion || !shouldAnimate ? {} : { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true, margin: "50px" }, transition: { duration: 0.6, ease: "easeOut" } })}
             className="text-center"
           >
             <motion.a
@@ -385,9 +427,7 @@ const HomeContent: FC = () => {
       <section className="py-20 px-4 bg-white dark:bg-gray-800 transition-colors duration-300">
         <div className="max-w-6xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "100px" }}
+                {...(prefersReducedMotion || !shouldAnimate ? {} : { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true, margin: "50px" }, transition: { duration: 0.6, ease: "easeOut" } })}
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-4">
@@ -399,26 +439,10 @@ const HomeContent: FC = () => {
           </motion.div>
         
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Frontend",
-                skills: ["React", "Astro", "Tailwind CSS", "Framer Motion", "EJS"],
-              },
-              {
-                title: "Backend",
-                skills: ["Node.js", "Express", "PostgreSQL", "MySQL", "REST APIs"],
-              },
-              {
-                title: "Cloud & DevOps",
-                skills: ["AWS (S3, EC2, RDS, EB)", "CloudFront", "Git/GitHub", "Linux"],
-              },
-            ].map((category, index) => (
+            {SKILL_CATEGORIES.map((category, index) => (
               <motion.div
                 key={category.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "150px" }}
-                transition={{ delay: index * 0.1 }}
+                {...(prefersReducedMotion || !shouldAnimate ? {} : { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true, margin: "50px" }, transition: { duration: 0.6, delay: index * 0.1, ease: "easeOut" } })}
                 className="bg-cream dark:bg-gray-900 p-8 rounded-xl border border-sage/20 dark:border-gray-700"
               >
                 <h3 className="text-2xl font-bold text-earth dark:text-gray-100 mb-4">{category.title}</h3>
@@ -467,9 +491,7 @@ const HomeContent: FC = () => {
       <section className="py-20 px-4 bg-gradient-to-br from-secondary-light via-primary-light to-earth-light dark:from-gray-800 dark:via-gray-900 dark:to-gray-950 text-white transition-colors duration-300">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+                {...(prefersReducedMotion || !shouldAnimate ? {} : { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true, margin: "50px" }, transition: { duration: 0.6, ease: "easeOut" } })}
           >
             <h2 className="text-4xl font-display font-bold mb-6">
               Let's Build Something Together

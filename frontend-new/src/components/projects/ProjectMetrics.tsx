@@ -38,7 +38,7 @@ const ProjectMetrics: FC<ProjectMetricsProps> = ({ metrics }) => {
           Project Impact
         </motion.h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="flex flex-wrap justify-center items-start gap-8">
           {metrics.map((metric, index) => {
             const { numericValue, suffix } = parseMetricValue(metric.value);
             
@@ -49,7 +49,7 @@ const ProjectMetrics: FC<ProjectMetricsProps> = ({ metrics }) => {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="text-center"
+                className="text-center min-w-[120px] flex-1 max-w-[200px]"
               >
                 <div className="text-4xl md:text-5xl font-display font-bold text-accent mb-2">
                   {numericValue > 0 ? (

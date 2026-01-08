@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
 import type { FC } from "react";
+import { memo } from "react";
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size = 'md' }) => {
+const LoadingSpinner: FC<LoadingSpinnerProps> = memo(({ size = 'md' }) => {
   const sizes = {
     sm: 'w-8 h-8 border-2',
     md: 'w-12 h-12 border-4',
@@ -22,6 +23,8 @@ const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size = 'md' }) => {
       />
     </div>
   );
-};
+});
+
+LoadingSpinner.displayName = 'LoadingSpinner';
 
 export default LoadingSpinner;

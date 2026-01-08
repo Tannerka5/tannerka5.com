@@ -1,28 +1,26 @@
-import { motion, useScroll } from "framer-motion";
-import { useState, useEffect, type FC } from "react";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { useState, type FC, useCallback, memo } from "react";
 
-const BackToTop: FC = () => {
+const BackToTop: FC = memo(() => {
   const [isVisible, setIsVisible] = useState(false);
   const { scrollY } = useScroll();
 
-  useEffect(() => {
-    return scrollY.on("change", (latest) => {
-      setIsVisible(latest > 300);
-    });
-  }, [scrollY]);
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsVisible(latest > 300);
+  });
 
-  const scrollToTop = () => {
+  const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  }, []);
 
   return (
     <motion.button
-      initial={{ opacity: 0, scale: 0 }}
+      initial={false}
       animate={{ 
         opacity: isVisible ? 1 : 0, 
         scale: isVisible ? 1 : 0 
       }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
       onClick={scrollToTop}
       className="fixed top-24 right-8 z-50 p-4 bg-accent text-white rounded-full shadow-lg dark:shadow-accent/20 hover:bg-accent-dark transition-colors"
       aria-label="Back to top"
@@ -42,6 +40,8 @@ const BackToTop: FC = () => {
       </svg>
     </motion.button>
   );
-};
+});
+
+BackToTop.displayName = 'BackToTop';
 
 export default BackToTop;

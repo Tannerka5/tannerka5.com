@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
-import { useEffect, type FC } from "react";
+import { useEffect, type FC, useMemo, memo } from "react";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 
@@ -10,7 +10,7 @@ interface AnimatedCounterProps {
   suffix?: string;
 }
 
-const AnimatedCounter: FC<AnimatedCounterProps> = ({ 
+const AnimatedCounter: FC<AnimatedCounterProps> = memo(({ 
   from = 0, 
   to, 
   duration = 2,
@@ -19,7 +19,7 @@ const AnimatedCounter: FC<AnimatedCounterProps> = ({
   const ref = useRef<HTMLSpanElement>(null);
   const count = useMotionValue(from);
   const rounded = useTransform(count, (latest) => Math.round(latest));
-  const isInView = useInView(ref, { once: true });
+  const isInView = useInView(ref, { once: true, margin: "0px" });
 
   useEffect(() => {
     if (isInView) {
@@ -34,6 +34,8 @@ const AnimatedCounter: FC<AnimatedCounterProps> = ({
       {suffix}
     </span>
   );
-};
+});
+
+AnimatedCounter.displayName = 'AnimatedCounter';
 
 export default AnimatedCounter;

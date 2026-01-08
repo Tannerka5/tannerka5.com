@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import type { FC } from "react";
+import { useMemo, memo } from "react";
 import type { BlogPost } from "../../../data/blog-posts";
 
 interface BlogCardProps {
@@ -7,22 +8,24 @@ interface BlogCardProps {
   delay?: number;
 }
 
-const BlogCard: FC<BlogCardProps> = ({ post, delay = 0 }) => {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+
+const BlogCard: FC<BlogCardProps> = memo(({ post, delay = 0 }) => {
+  const formattedDate = useMemo(() => formatDate(post.date), [post.date]);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay }}
-      whileHover={{ y: -8, transition: { duration: 0.3 } }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "50px" }}
+      transition={{ duration: 0.6, delay, ease: "easeOut" }}
+      whileHover={{ y: -8, transition: { duration: 0.2 } }}
       className="group"
     >
       <a
@@ -36,6 +39,9 @@ const BlogCard: FC<BlogCardProps> = ({ post, delay = 0 }) => {
               src={post.coverImage}
               alt={post.title}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+              loading="lazy"
+              width="400"
+              height="192"
             />
           </div>
         )}
@@ -64,13 +70,15 @@ const BlogCard: FC<BlogCardProps> = ({ post, delay = 0 }) => {
 
           {/* Meta */}
           <div className="flex items-center justify-between text-xs text-earth dark:text-gray-100 dark:text-gray-100/50 dark:text-dark-text-secondary pt-4 border-t dark:border-gray-700 dark:border-dark-border">
-            <span>{formatDate(post.date)}</span>
+            <span>{formattedDate}</span>
             <span>{post.readTime}</span>
           </div>
         </div>
       </a>
     </motion.div>
   );
-};
+});
+
+BlogCard.displayName = 'BlogCard';
 
 export default BlogCard;

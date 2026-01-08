@@ -1,27 +1,37 @@
-import { useState, useEffect, type FC } from "react";
+import { useState, useEffect, useCallback, type FC, memo } from "react";
 import { motion } from "framer-motion";
 
-const ThemeToggle: FC = () => {
+const ThemeToggle: FC = memo(() => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     // Check for saved theme preference or system preference
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    const initialTheme = savedTheme || systemTheme;
-    
-    setTheme(initialTheme);
-    document.documentElement.classList.toggle('dark', initialTheme === 'dark');
+    try {
+      const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const initialTheme = savedTheme || systemTheme;
+      
+      setTheme(initialTheme);
+      document.documentElement.classList.toggle('dark', initialTheme === 'dark');
+    } catch (e) {
+      // localStorage may not be available in some contexts
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      setTheme(systemTheme);
+    }
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
+    try {
+      localStorage.setItem('theme', newTheme);
+    } catch (e) {
+      // localStorage may not be available
+    }
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
-  };
+  }, [theme]);
 
   // Prevent hydration mismatch
   if (!mounted) {
@@ -72,6 +82,8 @@ const ThemeToggle: FC = () => {
       )}
     </motion.button>
   );
-};
+});
+
+ThemeToggle.displayName = 'ThemeToggle';
 
 export default ThemeToggle;

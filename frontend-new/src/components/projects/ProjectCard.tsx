@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import type { FC } from "react";
+import { memo } from "react";
 
 interface ProjectCardProps {
   slug: string;
@@ -18,7 +19,7 @@ interface ProjectCardProps {
   delay?: number;
 }
 
-const ProjectCard: FC<ProjectCardProps> = ({
+const ProjectCard: FC<ProjectCardProps> = memo(({
   slug,
   title,
   shortDescription,
@@ -33,11 +34,11 @@ const ProjectCard: FC<ProjectCardProps> = ({
 }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay }}
-      whileHover={{ y: -8, transition: { duration: 0.3 } }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "50px" }}
+      transition={{ duration: 0.6, delay, ease: "easeOut" }}
+      whileHover={{ y: -8, transition: { duration: 0.2 } }}
       className="group"
     >
       <a
@@ -54,6 +55,9 @@ const ProjectCard: FC<ProjectCardProps> = ({
                 src={logo}
                 alt={`${title} logo`}
                 className="max-h-32 w-auto relative z-10 transition-transform duration-300 group-hover:scale-110"
+                loading="lazy"
+                width="128"
+                height="128"
               />
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -90,17 +94,12 @@ const ProjectCard: FC<ProjectCardProps> = ({
           {/* Tech Stack */}
           <div className="flex flex-wrap gap-2 mb-4">
             {techStack.slice(0, 6).map((tech, index) => (
-              <motion.span
+              <span
                 key={tech}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: delay + index * 0.05 }}
-                whileHover={{ scale: 1.1, y: -2 }}
                 className="bg-sage/10 dark:bg-sage/20 text-sage-dark text-xs px-3 py-1 rounded-full border border-sage/20 dark:border-gray-700 dark:border-gray-700 hover:border-sage hover:bg-sage/20 transition-all"
               >
                 {tech}
-              </motion.span>
+              </span>
             ))}
           </div>
 
@@ -138,6 +137,8 @@ const ProjectCard: FC<ProjectCardProps> = ({
       </a>
     </motion.div>
   );
-};
+});
+
+ProjectCard.displayName = 'ProjectCard';
 
 export default ProjectCard;

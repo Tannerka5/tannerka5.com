@@ -41,6 +41,7 @@ const ProjectMedia: FC<ProjectMediaProps> = ({ media }) => {
                 <video
                   controls
                   poster={item.thumbnail}
+                  preload="none"
                   className="w-full rounded-lg shadow-lg dark:shadow-accent/20 mb-4"
                 >
                   <source src={item.url} type="video/mp4" />
@@ -52,6 +53,9 @@ const ProjectMedia: FC<ProjectMediaProps> = ({ media }) => {
                   src={item.url}
                   alt={item.caption}
                   className="w-full rounded-lg shadow-lg dark:shadow-accent/20 mb-4"
+                  loading="lazy"
+                  width="1200"
+                  height="675"
                 />
               )}
               {item.type === 'embed' && (
@@ -59,6 +63,7 @@ const ProjectMedia: FC<ProjectMediaProps> = ({ media }) => {
                   <iframe
                     src={item.url}
                     className="w-full h-full"
+                    loading="lazy"
                     allowFullScreen
                     title={item.caption}
                   />

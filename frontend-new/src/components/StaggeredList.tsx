@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import type { FC, ReactNode } from "react";
+import { useState, useEffect } from "react";
 
 interface StaggeredListProps {
   children: ReactNode;
@@ -12,26 +13,38 @@ const StaggeredList: FC<StaggeredListProps> = ({
   className,
   staggerDelay = 0.1 
 }) => {
-  const container = {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    const handleChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  const container = prefersReducedMotion ? {} : {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
         staggerChildren: staggerDelay,
+        duration: 0.5,
+        ease: "easeOut",
       },
     },
   };
 
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 },
+  const item = prefersReducedMotion ? {} : {
+    hidden: { opacity: 0 },
+    show: { opacity: 1 },
   };
 
   return (
     <motion.div
       variants={container}
-      initial="hidden"
-      whileInView="show"
+      initial={prefersReducedMotion ? undefined : "hidden"}
+      whileInView={prefersReducedMotion ? undefined : "show"}
       viewport={{ once: true }}
       className={className}
     >
