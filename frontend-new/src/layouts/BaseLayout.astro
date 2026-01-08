@@ -1,6 +1,5 @@
 ---
 import Navigation from '../components/Navigation';
-import PageTransition from '../components/PageTransition';
 import { ViewTransitions } from 'astro:transitions';
 import BackToTop from '../components/BackToTop';
 import SEO from '../components/SEO.astro';
@@ -52,6 +51,10 @@ const currentPath = Astro.url.pathname;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="https://github.com" />
+    <link rel="dns-prefetch" href="https://linkedin.com" />
+    
     <!-- Optimized font loading -->
     <link 
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap" 
@@ -66,22 +69,25 @@ const currentPath = Astro.url.pathname;
       />
     </noscript>
 
-    <!-- Theme Script (runs before page load to prevent flash) -->
+    <!-- Theme Script (minified) -->
     <script is:inline>
-      // This runs immediately to prevent FOUC (Flash of Unstyled Content)
-      const theme = localStorage.getItem('theme') || 
-                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      document.documentElement.classList.toggle('dark', theme === 'dark');
+      const t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+      document.documentElement.classList.toggle('dark',t==='dark');
     </script>
+
+    <!-- Performance hint styles -->
+    <style is:inline>
+      .will-change-transform {
+        will-change: transform;
+      }
+    </style>
 
     <ViewTransitions />
   </head>
   <body class="bg-cream dark:bg-gray-900 text-earth dark:text-gray-100 antialiased transition-colors duration-300">
-    <Navigation client:load currentPath={currentPath} />
+    <Navigation client:idle currentPath={currentPath} />
     <main class="pt-20">
-      <PageTransition client:load>
-        <slot />
-      </PageTransition>
+      <slot />
     </main>
     <footer class="bg-primary dark:bg-gray-950 text-white py-12 mt-20 transition-colors duration-300">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -118,17 +124,6 @@ const currentPath = Astro.url.pathname;
         </div>
       </div>
     </footer>
-    <BackToTop client:load />
+    <BackToTop client:visible />
   </body>
-
-  <!-- Service Worker (optional) -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(() => {
-          // Service worker not available, that's okay
-        });
-      });
-    }
-  </script>
 </html>

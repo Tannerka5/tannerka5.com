@@ -1,8 +1,14 @@
 import { motion } from "framer-motion";
 import type { FC } from "react";
-import AnimatedCounter from './AnimatedCounter';
-import AnimatedDivider from './AnimatedDivider';
-import StaggeredList from './StaggeredList';
+import { lazy, Suspense } from "react";
+
+// Lazy load heavy components
+const AnimatedCounter = lazy(() => import('./AnimatedCounter'));
+const AnimatedDivider = lazy(() => import('./AnimatedDivider'));
+const StaggeredList = lazy(() => import('./StaggeredList'));
+
+// Detect mobile for conditional animations
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
 const HomeContent: FC = () => {
   return (
@@ -12,7 +18,7 @@ const HomeContent: FC = () => {
         {/* Animated Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent opacity-5 dark:opacity-10"></div>
         
-        {/* Floating Shapes - FIXED for mobile */}
+        {/* Floating Shapes - OPTIMIZED for mobile */}
         <motion.div
           animate={{
             y: [0, -20, 0],
@@ -23,7 +29,7 @@ const HomeContent: FC = () => {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute top-20 left-4 md:left-10 w-24 h-24 md:w-32 md:h-32 bg-accent/10 dark:bg-accent/20 rounded-full blur-3xl"
+          className="absolute top-20 left-4 md:left-10 w-24 h-24 md:w-32 md:h-32 bg-accent/10 dark:bg-accent/20 rounded-full blur-3xl will-change-transform"
         />
         <motion.div
           animate={{
@@ -35,7 +41,7 @@ const HomeContent: FC = () => {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute bottom-20 right-4 md:right-10 w-32 h-32 md:w-40 md:h-40 bg-primary/10 dark:bg-primary/20 rounded-full blur-3xl"
+          className="absolute bottom-20 right-4 md:right-10 w-32 h-32 md:w-40 md:h-40 bg-primary/10 dark:bg-primary/20 rounded-full blur-3xl will-change-transform"
         />
 
         <div className="relative z-10 max-w-5xl mx-auto text-center">
@@ -52,9 +58,9 @@ const HomeContent: FC = () => {
                   backgroundImage: "linear-gradient(90deg, #2E5266, #4d85a4ff, #2E5266)",
                   backgroundSize: "300% 100%",
                 }}
-                animate={{
+                animate={!isMobile ? {
                   backgroundPosition: ["0% 50%", "50% 50%", "100% 50%", "50% 50%", "0% 50%"],
-                }}
+                } : {}}
                 transition={{
                   duration: 6,
                   repeat: Infinity,
@@ -134,7 +140,7 @@ const HomeContent: FC = () => {
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 will-change-transform"
         >
           <svg
             className="w-6 h-6 text-earth/50 dark:text-gray-500"
@@ -152,7 +158,9 @@ const HomeContent: FC = () => {
         </motion.div>
       </section>
       
-      <AnimatedDivider color="#6B9080" />
+      <Suspense fallback={<div className="h-2" />}>
+        <AnimatedDivider color="#6B9080" />
+      </Suspense>
 
       {/* About Preview Section */}
       <section className="py-20 px-4 bg-white dark:bg-gray-800 transition-colors duration-300">
@@ -161,7 +169,7 @@ const HomeContent: FC = () => {
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "100px" }}
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-6">
@@ -202,7 +210,7 @@ const HomeContent: FC = () => {
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "100px" }}
               transition={{ duration: 0.8 }}
               className="grid grid-cols-2 gap-4"
             >
@@ -216,7 +224,7 @@ const HomeContent: FC = () => {
                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, margin: "100px" }}
                   transition={{ delay: index * 0.1 }}
                   className="bg-cream dark:bg-gray-900 p-6 rounded-xl text-center border border-sage/20 dark:border-gray-700"
                 >
@@ -224,7 +232,9 @@ const HomeContent: FC = () => {
                     {stat.isSpecial ? (
                       stat.value
                     ) : (
-                      <AnimatedCounter to={stat.value as number} suffix={stat.suffix} duration={1.5} />
+                      <Suspense fallback={<span>{stat.value}{stat.suffix}</span>}>
+                        <AnimatedCounter to={stat.value as number} suffix={stat.suffix} duration={1.5} />
+                      </Suspense>
                     )}
                   </div>
                   <div className="text-sm text-earth/70 dark:text-gray-400">{stat.label}</div>
@@ -235,7 +245,9 @@ const HomeContent: FC = () => {
         </div>
       </section>
 
-      <AnimatedDivider color="#6B9080" />
+      <Suspense fallback={<div className="h-2" />}>
+        <AnimatedDivider color="#6B9080" />
+      </Suspense>
 
       {/* Featured Projects Section */}
       <section className="py-20 px-4 bg-cream dark:bg-gray-900 transition-colors duration-300">
@@ -243,7 +255,7 @@ const HomeContent: FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "100px" }}
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-4">
@@ -287,7 +299,7 @@ const HomeContent: FC = () => {
                 href={project.link}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "150px" }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
                 className="group bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md hover:shadow-xl dark:hover:shadow-accent/20 transition-all"
@@ -365,7 +377,9 @@ const HomeContent: FC = () => {
         </div>
       </section>
 
-      <AnimatedDivider color="#6B9080" />
+      <Suspense fallback={<div className="h-2" />}>
+        <AnimatedDivider color="#6B9080" />
+      </Suspense>
 
       {/* Skills Section */}
       <section className="py-20 px-4 bg-white dark:bg-gray-800 transition-colors duration-300">
@@ -373,7 +387,7 @@ const HomeContent: FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "100px" }}
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-4">
@@ -403,36 +417,51 @@ const HomeContent: FC = () => {
                 key={category.title}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "150px" }}
                 transition={{ delay: index * 0.1 }}
                 className="bg-cream dark:bg-gray-900 p-8 rounded-xl border border-sage/20 dark:border-gray-700"
               >
                 <h3 className="text-2xl font-bold text-earth dark:text-gray-100 mb-4">{category.title}</h3>
-                <StaggeredList className="space-y-2" staggerDelay={0.1}>
-                  {category.skills.map((skill) => (
-                    <li key={skill} className="flex items-center gap-2 text-earth/70 dark:text-gray-300">
-                      <svg
-                        className="w-4 h-4 text-accent"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      {skill}
-                    </li>
-                  ))}
-                </StaggeredList>
+                <Suspense fallback={
+                  <ul className="space-y-2">
+                    {category.skills.map((skill) => (
+                      <li key={skill} className="flex items-center gap-2 text-earth/70 dark:text-gray-300">
+                        <svg className="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        {skill}
+                      </li>
+                    ))}
+                  </ul>
+                }>
+                  <StaggeredList className="space-y-2" staggerDelay={0.1}>
+                    {category.skills.map((skill) => (
+                      <li key={skill} className="flex items-center gap-2 text-earth/70 dark:text-gray-300">
+                        <svg
+                          className="w-4 h-4 text-accent"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        {skill}
+                      </li>
+                    ))}
+                  </StaggeredList>
+                </Suspense>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <AnimatedDivider color="#6B9080" />
+      <Suspense fallback={<div className="h-2" />}>
+        <AnimatedDivider color="#6B9080" />
+      </Suspense>
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-secondary-light via-primary-light to-earth-light dark:from-gray-800 dark:via-gray-900 dark:to-gray-950 text-white transition-colors duration-300">

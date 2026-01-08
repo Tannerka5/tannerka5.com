@@ -17,9 +17,14 @@ export default defineConfig({
           manualChunks: {
             'framer-motion': ['framer-motion'],
             'react-vendor': ['react', 'react-dom'],
+            'home-animations': ['./src/components/AnimatedCounter', './src/components/AnimatedDivider', './src/components/StaggeredList'],
           },
         },
       },
     },
   },
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'viewport'
+  }
 });
