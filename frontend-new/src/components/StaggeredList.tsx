@@ -23,19 +23,23 @@ const StaggeredList: FC<StaggeredListProps> = ({
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  const container = prefersReducedMotion ? {} : {
+  if (prefersReducedMotion) {
+    return <div className={className}>{children}</div>;
+  }
+
+  const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
         staggerChildren: staggerDelay,
         duration: 0.5,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
     },
   };
 
-  const item = prefersReducedMotion ? {} : {
+  const item = {
     hidden: { opacity: 0 },
     show: { opacity: 1 },
   };
@@ -43,8 +47,8 @@ const StaggeredList: FC<StaggeredListProps> = ({
   return (
     <motion.div
       variants={container}
-      initial={prefersReducedMotion ? undefined : "hidden"}
-      whileInView={prefersReducedMotion ? undefined : "show"}
+      initial="hidden"
+      whileInView="show"
       viewport={{ once: true }}
       className={className}
     >

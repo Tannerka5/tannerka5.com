@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import type { FC } from "react";
 import AnimatedDivider from './AnimatedDivider';
 import StaggeredList from './StaggeredList';
-import AnimatedCounter from './AnimatedCounter';
 
 const AboutContent: FC = () => {
   return (

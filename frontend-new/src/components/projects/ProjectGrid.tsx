@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import type { FC } from "react";
-import { memo, useState, useEffect, useMemo } from "react";
+import { memo, useState, useEffect } from "react";
 import ProjectCard from "./ProjectCard";
 import AnimatedDivider from "../AnimatedDivider";
 import AnimatedCounter from "../AnimatedCounter";

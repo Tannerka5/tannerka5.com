@@ -93,7 +93,7 @@ const ProjectCard: FC<ProjectCardProps> = memo(({
 
           {/* Tech Stack */}
           <div className="flex flex-wrap gap-2 mb-4">
-            {techStack.slice(0, 6).map((tech, index) => (
+            {techStack.slice(0, 6).map((tech) => (
               <span
                 key={tech}
                 className="bg-sage/10 dark:bg-sage/20 text-sage-dark text-xs px-3 py-1 rounded-full border border-sage/20 dark:border-gray-700 dark:border-gray-700 hover:border-sage hover:bg-sage/20 transition-all"

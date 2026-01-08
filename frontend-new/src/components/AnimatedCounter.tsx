@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
-import { useEffect, type FC, useMemo, memo } from "react";
+import { useEffect, type FC, memo } from "react";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 

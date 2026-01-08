@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import type { FC } from "react";
-import { lazy, Suspense, useState, useEffect, useMemo } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 
 // Lazy load heavy components
 const AnimatedCounter = lazy(() => import('./AnimatedCounter'));
@@ -213,7 +213,7 @@ const HomeContent: FC = () => {
             {...(prefersReducedMotion || !shouldAnimate ? {} : { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.7, delay: 0.4, ease: "easeOut" } })}
             className="flex flex-wrap gap-3 justify-center"
           >
-            {TECH_STACK.map((tech, index) => (
+            {TECH_STACK.map((tech) => (
               <span
                 key={tech}
                 className="px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-earth/70 dark:text-gray-300 rounded-full text-sm font-medium border border-sage/20 dark:border-gray-600"
