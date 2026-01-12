@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import type { FC } from "react";
 import ThemeToggle from './ThemeToggle';
+import { apiClient } from '../lib/api';
 
 interface NavProps {
   currentPath?: string;
@@ -18,6 +19,34 @@ const NAV_LINKS = [
 const Navigation: FC<NavProps> = ({ currentPath = "/" }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check authentication status
+  const checkAuth = useCallback(() => {
+    const token = apiClient.getToken();
+    setIsAuthenticated(!!token);
+  }, []);
+
+  useEffect(() => {
+    // Check auth on mount
+    checkAuth();
+
+    // Listen for storage changes (login/logout from other tabs)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'admin_token') {
+        checkAuth();
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+
+    // Also check periodically (in case of same-tab login/logout)
+    const interval = setInterval(checkAuth, 1000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [checkAuth]);
 
   useEffect(() => {
     let ticking = false;
@@ -38,6 +67,14 @@ const Navigation: FC<NavProps> = ({ currentPath = "/" }) => {
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
   }, []);
+
+  const handleLogout = useCallback(() => {
+    apiClient.logout();
+    setIsAuthenticated(false);
+    if (currentPath?.startsWith('/admin')) {
+      window.location.href = '/';
+    }
+  }, [currentPath]);
 
   const [hasMounted, setHasMounted] = useState(false);
 
@@ -92,6 +129,27 @@ const Navigation: FC<NavProps> = ({ currentPath = "/" }) => {
                   )}
                 </a>
               ))}
+              {isAuthenticated && (
+                <motion.a
+                  href="/admin"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`relative text-sm font-medium transition-colors duration-200 ${
+                    currentPath === '/admin'
+                      ? "text-primary dark:text-accent-light"
+                      : "text-earth/70 dark:text-gray-300 hover:text-primary dark:hover:text-accent-light"
+                  }`}
+                >
+                  Admin
+                  {currentPath === '/admin' && (
+                    <motion.div
+                      layoutId="activeNavAdmin"
+                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-accent"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </motion.a>
+              )}
               <motion.a
                 href="/contact"
                 whileHover={{ scale: 1.05 }}
@@ -100,6 +158,25 @@ const Navigation: FC<NavProps> = ({ currentPath = "/" }) => {
               >
                 Let's Talk
               </motion.a>
+              {isAuthenticated ? (
+                <motion.button
+                  onClick={handleLogout}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-5 py-2 bg-gray-200 dark:bg-gray-700 text-earth dark:text-gray-200 rounded-full font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+                >
+                  Logout
+                </motion.button>
+              ) : (
+                <motion.a
+                  href="/admin/login"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-5 py-2 bg-gray-200 dark:bg-gray-700 text-earth dark:text-gray-200 rounded-full font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+                >
+                  Login
+                </motion.a>
+              )}
               <ThemeToggle />
             </div>
 
@@ -180,6 +257,25 @@ const Navigation: FC<NavProps> = ({ currentPath = "/" }) => {
               </motion.a>
             ))}
             
+            {isAuthenticated && (
+              <motion.a
+                href="/admin"
+                initial={false}
+                animate={{
+                  x: isMobileMenuOpen ? 0 : -20,
+                  opacity: isMobileMenuOpen ? 1 : 0,
+                }}
+                transition={{ duration: 0.3, delay: 0.35 }}
+                className={`text-2xl font-medium ${
+                  currentPath === '/admin'
+                    ? "text-primary dark:text-accent-light"
+                    : "text-earth dark:text-gray-200 hover:text-primary dark:hover:text-accent-light"
+                }`}
+              >
+                Admin
+              </motion.a>
+            )}
+            
             <motion.a
               href="/contact"
               initial={false}
@@ -192,6 +288,34 @@ const Navigation: FC<NavProps> = ({ currentPath = "/" }) => {
             >
               Let's Talk
             </motion.a>
+            
+            {isAuthenticated ? (
+              <motion.button
+                onClick={handleLogout}
+                initial={false}
+                animate={{
+                  x: isMobileMenuOpen ? 0 : -20,
+                  opacity: isMobileMenuOpen ? 1 : 0,
+                }}
+                transition={{ duration: 0.3, delay: 0.45 }}
+                className="w-full px-6 py-4 mt-4 bg-gray-200 dark:bg-gray-700 text-earth dark:text-gray-200 text-center rounded-full font-semibold text-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+              >
+                Logout
+              </motion.button>
+            ) : (
+              <motion.a
+                href="/admin/login"
+                initial={false}
+                animate={{
+                  x: isMobileMenuOpen ? 0 : -20,
+                  opacity: isMobileMenuOpen ? 1 : 0,
+                }}
+                transition={{ duration: 0.3, delay: 0.45 }}
+                className="w-full px-6 py-4 mt-4 bg-gray-200 dark:bg-gray-700 text-earth dark:text-gray-200 text-center rounded-full font-semibold text-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+              >
+                Login
+              </motion.a>
+            )}
           </motion.div>
 
           {/* Full-Stack Developer tagline at bottom */}

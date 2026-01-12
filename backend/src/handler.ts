@@ -6,273 +6,573 @@ import {
   PutCommand,
   UpdateCommand,
   DeleteCommand,
-  GetCommand
+  GetCommand,
+  QueryCommand,
+  BatchWriteCommand
 } from '@aws-sdk/lib-dynamodb';
 import { v4 as uuidv4 } from 'uuid';
-
-// Types
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  technologies: string[];
-  liveUrl: string;
-  githubUrl: string;
-  logoPath: string;
-  dateAdded: number;
-  dateUpdated: number;
-}
-
-interface CreateProjectInput {
-  title: string;
-  description: string;
-  technologies: string[];
-  liveUrl: string;
-  githubUrl: string;
-  logoPath: string;
-}
-
-interface UpdateProjectInput {
-  title?: string;
-  description?: string;
-  technologies?: string[];
-  liveUrl?: string;
-  githubUrl?: string;
-  logoPath?: string;
-}
+import * as jwt from 'jsonwebtoken';
+import * as bcrypt from 'bcryptjs';
 
 // Initialize DynamoDB client
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
-const TABLE_NAME = process.env.TABLE_NAME || 'portfolio-projects';
-const API_KEY = process.env.API_KEY || '';
+// Table names
+const PROJECTS_TABLE = process.env.PROJECTS_TABLE || 'portfolio-projects';
+const BLOG_POSTS_TABLE = process.env.BLOG_POSTS_TABLE || 'portfolio-blog-posts';
+const USERS_TABLE = process.env.USERS_TABLE || 'portfolio-users';
+// Note: Users table should have a GSI named 'username-index' with 'username' as partition key
 
-// CORS headers
-const headers = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': 'https://tannerka5.com',
-  'Access-Control-Allow-Headers': 'Content-Type,x-api-key',
-  'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
+// Secrets
+const JWT_SECRET = process.env.JWT_SECRET || 'change-me-in-production';
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || ''; // Set via bcrypt.hashSync('your-password', 10)
+
+
+// Helper function to create response with proper CORS headers
+const createResponse = (statusCode: number, body: any, event?: APIGatewayProxyEvent, customHeaders?: Record<string, string>): APIGatewayProxyResult => {
+  const requestOrigin = event?.headers?.origin || event?.headers?.Origin;
+  const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
+  
+  // If wildcard is configured or no specific origin, use wildcard
+  // Otherwise, if request origin matches allowed origin, echo it back
+  let corsOrigin = allowedOrigin;
+  
+  if (allowedOrigin !== '*' && requestOrigin) {
+    // Check if request origin matches allowed origin
+    // Support multiple origins separated by comma
+    const allowedOrigins = allowedOrigin.split(',').map(o => o.trim());
+    
+    if (allowedOrigins.includes(requestOrigin) || 
+        allowedOrigins.includes('*') ||
+        // Allow localhost for development
+        (requestOrigin.includes('localhost') && (allowedOrigins.includes('*') || allowedOrigins.some(o => o.includes('localhost'))))) {
+      corsOrigin = requestOrigin;
+    }
+  }
+  
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+    ...customHeaders,
+  };
+  
+  // Add credentials header if not using wildcard (required for cookies/auth headers)
+  if (corsOrigin !== '*') {
+    headers['Access-Control-Allow-Credentials'] = 'true';
+  }
+  
+  return {
+    statusCode,
+    headers,
+    body: JSON.stringify(body)
+  };
 };
 
-// Helper function to create response
-const createResponse = (statusCode: number, body: any): APIGatewayProxyResult => ({
-  statusCode,
-  headers,
-  body: JSON.stringify(body)
-});
-
-// Validate API key for protected routes
-const validateApiKey = (event: APIGatewayProxyEvent): boolean => {
-  const apiKey = event.headers['x-api-key'] || event.headers['X-Api-Key'];
-  return apiKey === API_KEY;
+// JWT verification
+const verifyToken = (event: APIGatewayProxyEvent): { valid: boolean; userId?: string } => {
+  try {
+    const authHeader = event.headers['Authorization'] || event.headers['authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return { valid: false };
+    }
+    
+    const token = authHeader.substring(7);
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; exp: number };
+    return { valid: true, userId: decoded.userId };
+  } catch (error) {
+    return { valid: false };
+  }
 };
+
+// Authentication endpoints
+async function login(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  if (!event.body) {
+    return createResponse(400, { error: 'Request body is required' }, event);
+  }
+
+  const { username, password } = JSON.parse(event.body);
+  
+  if (!username || !password) {
+    return createResponse(400, { error: 'Username and password are required' }, event);
+  }
+
+  try {
+    // Try to fetch user from DynamoDB
+    const userResult = await docClient.send(new QueryCommand({
+      TableName: USERS_TABLE,
+      IndexName: 'username-index',
+      KeyConditionExpression: 'username = :username',
+      ExpressionAttributeValues: { ':username': username }
+    }));
+
+    let user: any = null;
+    
+    if (userResult.Items && userResult.Items.length > 0) {
+      // User found in database
+      user = userResult.Items[0];
+      const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+      
+      if (isValidPassword) {
+        const token = jwt.sign(
+          { userId: user.id, username: user.username },
+          JWT_SECRET,
+          { expiresIn: '24h' }
+        );
+        
+        return createResponse(200, {
+          token,
+          user: { username: user.username, userId: user.id }
+        }, event);
+      }
+    } else {
+      // Fallback to environment variable for initial setup
+      // This allows you to set up the first admin user via environment variable
+      if (ADMIN_PASSWORD_HASH && username === 'admin') {
+        const isValidPassword = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+        
+        if (isValidPassword) {
+          // Create the admin user in DynamoDB for future use
+          const adminUser = {
+            id: uuidv4(),
+            username: 'admin',
+            passwordHash: ADMIN_PASSWORD_HASH,
+            role: 'admin',
+            createdAt: Date.now()
+          };
+          
+          await docClient.send(new PutCommand({
+            TableName: USERS_TABLE,
+            Item: adminUser
+          }));
+          
+          const token = jwt.sign(
+            { userId: adminUser.id, username: 'admin' },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+          );
+          
+          return createResponse(200, {
+            token,
+            user: { username: 'admin', userId: adminUser.id }
+          }, event);
+        }
+      }
+    }
+
+    return createResponse(401, { error: 'Invalid credentials' }, event);
+  } catch (error) {
+    console.error('Login error:', error);
+    // Fallback to environment variable if DynamoDB fails
+    if (ADMIN_PASSWORD_HASH && username === 'admin') {
+      const isValidPassword = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+      
+      if (isValidPassword) {
+        const token = jwt.sign(
+          { userId: 'admin', username: 'admin' },
+          JWT_SECRET,
+          { expiresIn: '24h' }
+        );
+        
+        return createResponse(200, {
+          token,
+          user: { username: 'admin', userId: 'admin' }
+        }, event);
+      }
+    }
+    
+    return createResponse(401, { error: 'Invalid credentials' }, event);
+  }
+}
 
 // Main Lambda handler
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log('Event:', JSON.stringify(event, null, 2));
 
   const method = event.httpMethod;
-  const path = event.path;
+  const path = event.path || event.requestContext.path || '';
 
   try {
     // Handle CORS preflight
     if (method === 'OPTIONS') {
-      return createResponse(200, {});
+      return createResponse(200, {}, event);
     }
 
-    // GET /projects - Public endpoint
-    if (method === 'GET' && path === '/projects') {
-      return await getProjects();
+    // Public endpoints
+    if (method === 'POST' && path.includes('/auth/login')) {
+      return await login(event);
     }
 
-    // All other endpoints require authentication
-    if (!validateApiKey(event)) {
-      return createResponse(401, { error: 'Unauthorized' });
+    // Protected endpoints - require authentication
+    const auth = verifyToken(event);
+    if (!auth.valid) {
+      return createResponse(401, { error: 'Unauthorized - Invalid or missing token' }, event);
     }
 
-    // POST /projects - Create new project
-    if (method === 'POST' && path === '/projects') {
-      return await createProject(event);
+    // Route handling
+    const pathParts = path.split('/').filter(p => p);
+    
+    // Projects endpoints
+    if (pathParts[0] === 'projects') {
+      if (method === 'GET' && pathParts.length === 1) {
+        return await getProjects(event);
+      }
+      if (method === 'GET' && pathParts.length === 2) {
+        return await getProject(pathParts[1], event);
+      }
+      if (method === 'POST') {
+        return await createProject(event);
+      }
+      if (method === 'PUT' && pathParts.length === 2) {
+        return await updateProject(pathParts[1], event);
+      }
+      if (method === 'DELETE' && pathParts.length === 2) {
+        return await deleteProject(pathParts[1], event);
+      }
+      if (method === 'POST' && pathParts[1] === 'reorder') {
+        return await reorderProjects(event);
+      }
     }
 
-    // PUT /projects/{id} - Update project
-    if (method === 'PUT' && path.startsWith('/projects/')) {
-      const id = path.split('/')[2];
-      return await updateProject(id, event);
+    // Blog posts endpoints
+    if (pathParts[0] === 'blog-posts' || pathParts[0] === 'blog') {
+      if (method === 'GET' && pathParts.length === 1) {
+        return await getBlogPosts(event);
+      }
+      if (method === 'GET' && pathParts.length === 2) {
+        return await getBlogPost(pathParts[1], event);
+      }
+      if (method === 'POST') {
+        return await createBlogPost(event);
+      }
+      if (method === 'PUT' && pathParts.length === 2) {
+        return await updateBlogPost(pathParts[1], event);
+      }
+      if (method === 'DELETE' && pathParts.length === 2) {
+        return await deleteBlogPost(pathParts[1], event);
+      }
+      if (method === 'POST' && pathParts[1] === 'reorder') {
+        return await reorderBlogPosts(event);
+      }
     }
 
-    // DELETE /projects/{id} - Delete project
-    if (method === 'DELETE' && path.startsWith('/projects/')) {
-      const id = path.split('/')[2];
-      return await deleteProject(id);
-    }
-
-    // GET /projects/{id} - Get single project (optional, for future use)
-    if (method === 'GET' && path.startsWith('/projects/')) {
-      const id = path.split('/')[2];
-      return await getProject(id);
-    }
-
-    return createResponse(404, { error: 'Not found' });
-
+    return createResponse(404, { error: 'Not found' }, event);
   } catch (error) {
     console.error('Error:', error);
-    return createResponse(500, { 
+    return createResponse(500, {
       error: 'Internal server error',
       message: error instanceof Error ? error.message : 'Unknown error'
-    });
+    }, event);
   }
 };
 
-// Get all projects
-async function getProjects(): Promise<APIGatewayProxyResult> {
+// ==================== PROJECTS ====================
+
+async function getProjects(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   const result = await docClient.send(new ScanCommand({
-    TableName: TABLE_NAME
+    TableName: PROJECTS_TABLE
   }));
 
-  const projects = (result.Items || []) as Project[];
-  
-  // Sort by dateAdded (newest first)
-  projects.sort((a, b) => b.dateAdded - a.dateAdded);
+  const projects = (result.Items || []) as any[];
+  projects.sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  return createResponse(200, { projects });
+  return createResponse(200, { projects }, event);
 }
 
-// Get single project
-async function getProject(id: string): Promise<APIGatewayProxyResult> {
-  const result = await docClient.send(new GetCommand({
-    TableName: TABLE_NAME,
-    Key: { id }
+async function getProject(slug: string, event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  const result = await docClient.send(new QueryCommand({
+    TableName: PROJECTS_TABLE,
+    IndexName: 'slug-index',
+    KeyConditionExpression: 'slug = :slug',
+    ExpressionAttributeValues: { ':slug': slug }
   }));
 
-  if (!result.Item) {
-    return createResponse(404, { error: 'Project not found' });
+  if (!result.Items || result.Items.length === 0) {
+    return createResponse(404, { error: 'Project not found' }, event);
   }
 
-  return createResponse(200, { project: result.Item as Project });
+  return createResponse(200, { project: result.Items[0] }, event);
 }
 
-// Create new project
 async function createProject(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   if (!event.body) {
-    return createResponse(400, { error: 'Request body is required' });
+    return createResponse(400, { error: 'Request body is required' }, event);
   }
 
-  const input: CreateProjectInput = JSON.parse(event.body);
+  const input = JSON.parse(event.body);
+  
+  // Get max order
+  const projects = await docClient.send(new ScanCommand({ TableName: PROJECTS_TABLE }));
+  const maxOrder = Math.max(0, ...((projects.Items || []).map((p: any) => p.order || 0)));
 
-  // Validate required fields
-  if (!input.title || !input.description) {
-    return createResponse(400, { error: 'Title and description are required' });
-  }
-
-  const now = Date.now();
-  const project: Project = {
+  const project = {
     id: uuidv4(),
-    title: input.title,
-    description: input.description,
-    technologies: input.technologies || [],
-    liveUrl: input.liveUrl || '',
-    githubUrl: input.githubUrl || '',
-    logoPath: input.logoPath || '',
-    dateAdded: now,
-    dateUpdated: now
+    slug: input.slug || input.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    ...input,
+    order: input.order !== undefined ? input.order : maxOrder + 1,
+    createdAt: Date.now(),
+    updatedAt: Date.now()
   };
 
   await docClient.send(new PutCommand({
-    TableName: TABLE_NAME,
+    TableName: PROJECTS_TABLE,
     Item: project
   }));
 
-  return createResponse(201, { 
-    id: project.id, 
-    message: 'Project created successfully',
-    project 
-  });
+  return createResponse(201, { project }, event);
 }
 
-// Update project
-async function updateProject(id: string, event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+async function updateProject(slug: string, event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   if (!event.body) {
-    return createResponse(400, { error: 'Request body is required' });
+    return createResponse(400, { error: 'Request body is required' }, event);
   }
 
-  const input: UpdateProjectInput = JSON.parse(event.body);
+  const input = JSON.parse(event.body);
+  
+  // Get existing project
+  const existing = await docClient.send(new QueryCommand({
+    TableName: PROJECTS_TABLE,
+    IndexName: 'slug-index',
+    KeyConditionExpression: 'slug = :slug',
+    ExpressionAttributeValues: { ':slug': slug }
+  }));
 
-  // Build update expression dynamically
+  if (!existing.Items || existing.Items.length === 0) {
+    return createResponse(404, { error: 'Project not found' }, event);
+  }
+
+  const existingProject = existing.Items[0];
+  
   const updateExpressions: string[] = [];
   const expressionAttributeNames: Record<string, string> = {};
   const expressionAttributeValues: Record<string, any> = {};
 
-  if (input.title) {
-    updateExpressions.push('#title = :title');
-    expressionAttributeNames['#title'] = 'title';
-    expressionAttributeValues[':title'] = input.title;
-  }
+  // Update all provided fields
+  Object.keys(input).forEach(key => {
+    if (key !== 'id' && key !== 'slug') {
+      updateExpressions.push(`#${key} = :${key}`);
+      expressionAttributeNames[`#${key}`] = key;
+      expressionAttributeValues[`:${key}`] = input[key];
+    }
+  });
 
-  if (input.description) {
-    updateExpressions.push('#description = :description');
-    expressionAttributeNames['#description'] = 'description';
-    expressionAttributeValues[':description'] = input.description;
-  }
-
-  if (input.technologies) {
-    updateExpressions.push('#technologies = :technologies');
-    expressionAttributeNames['#technologies'] = 'technologies';
-    expressionAttributeValues[':technologies'] = input.technologies;
-  }
-
-  if (input.liveUrl !== undefined) {
-    updateExpressions.push('#liveUrl = :liveUrl');
-    expressionAttributeNames['#liveUrl'] = 'liveUrl';
-    expressionAttributeValues[':liveUrl'] = input.liveUrl;
-  }
-
-  if (input.githubUrl !== undefined) {
-    updateExpressions.push('#githubUrl = :githubUrl');
-    expressionAttributeNames['#githubUrl'] = 'githubUrl';
-    expressionAttributeValues[':githubUrl'] = input.githubUrl;
-  }
-
-  if (input.logoPath !== undefined) {
-    updateExpressions.push('#logoPath = :logoPath');
-    expressionAttributeNames['#logoPath'] = 'logoPath';
-    expressionAttributeValues[':logoPath'] = input.logoPath;
-  }
-
-  // Always update dateUpdated
-  updateExpressions.push('#dateUpdated = :dateUpdated');
-  expressionAttributeNames['#dateUpdated'] = 'dateUpdated';
-  expressionAttributeValues[':dateUpdated'] = Date.now();
-
-  if (updateExpressions.length === 1) {
-    return createResponse(400, { error: 'No fields to update' });
-  }
+  updateExpressions.push('#updatedAt = :updatedAt');
+  expressionAttributeNames['#updatedAt'] = 'updatedAt';
+  expressionAttributeValues[':updatedAt'] = Date.now();
 
   await docClient.send(new UpdateCommand({
-    TableName: TABLE_NAME,
-    Key: { id },
+    TableName: PROJECTS_TABLE,
+    Key: { id: existingProject.id },
     UpdateExpression: `SET ${updateExpressions.join(', ')}`,
     ExpressionAttributeNames: expressionAttributeNames,
     ExpressionAttributeValues: expressionAttributeValues
   }));
 
-  return createResponse(200, { 
-    message: 'Project updated successfully',
-    id 
-  });
+  return createResponse(200, { message: 'Project updated successfully' }, event);
 }
 
-// Delete project
-async function deleteProject(id: string): Promise<APIGatewayProxyResult> {
-  await docClient.send(new DeleteCommand({
-    TableName: TABLE_NAME,
-    Key: { id }
+async function deleteProject(slug: string, event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  const existing = await docClient.send(new QueryCommand({
+    TableName: PROJECTS_TABLE,
+    IndexName: 'slug-index',
+    KeyConditionExpression: 'slug = :slug',
+    ExpressionAttributeValues: { ':slug': slug }
   }));
 
-  return createResponse(200, { 
-    message: 'Project deleted successfully',
-    id 
+  if (!existing.Items || existing.Items.length === 0) {
+    return createResponse(404, { error: 'Project not found' }, event);
+  }
+
+  await docClient.send(new DeleteCommand({
+    TableName: PROJECTS_TABLE,
+    Key: { id: existing.Items[0].id }
+  }));
+
+  return createResponse(200, { message: 'Project deleted successfully' }, event);
+}
+
+async function reorderProjects(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  if (!event.body) {
+    return createResponse(400, { error: 'Request body is required' }, event);
+  }
+
+  const { items } = JSON.parse(event.body); // Array of { id, order }
+  
+  const writeRequests = items.map((item: { id: string; order: number }) => ({
+    PutRequest: {
+      Item: {
+        // Need to get full item first, then update order
+      }
+    }
+  }));
+
+  // For simplicity, do individual updates
+  for (const item of items) {
+    await docClient.send(new UpdateCommand({
+      TableName: PROJECTS_TABLE,
+      Key: { id: item.id },
+      UpdateExpression: 'SET #order = :order, #updatedAt = :updatedAt',
+      ExpressionAttributeNames: {
+        '#order': 'order',
+        '#updatedAt': 'updatedAt'
+      },
+      ExpressionAttributeValues: {
+        ':order': item.order,
+        ':updatedAt': Date.now()
+      }
+    }));
+  }
+
+  return createResponse(200, { message: 'Projects reordered successfully' }, event);
+}
+
+// ==================== BLOG POSTS ====================
+
+async function getBlogPosts(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  const result = await docClient.send(new ScanCommand({
+    TableName: BLOG_POSTS_TABLE
+  }));
+
+  const posts = (result.Items || []) as any[];
+  posts.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  return createResponse(200, { posts }, event);
+}
+
+async function getBlogPost(slug: string, event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  const result = await docClient.send(new QueryCommand({
+    TableName: BLOG_POSTS_TABLE,
+    IndexName: 'slug-index',
+    KeyConditionExpression: 'slug = :slug',
+    ExpressionAttributeValues: { ':slug': slug }
+  }));
+
+  if (!result.Items || result.Items.length === 0) {
+    return createResponse(404, { error: 'Blog post not found' }, event);
+  }
+
+  return createResponse(200, { post: result.Items[0] }, event);
+}
+
+async function createBlogPost(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  if (!event.body) {
+    return createResponse(400, { error: 'Request body is required' }, event);
+  }
+
+  const input = JSON.parse(event.body);
+  
+  // Get max order
+  const posts = await docClient.send(new ScanCommand({ TableName: BLOG_POSTS_TABLE }));
+  const maxOrder = Math.max(0, ...((posts.Items || []).map((p: any) => p.order || 0)));
+
+  const post = {
+    id: uuidv4(),
+    slug: input.slug || input.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    ...input,
+    order: input.order !== undefined ? input.order : maxOrder + 1,
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  };
+
+  await docClient.send(new PutCommand({
+    TableName: BLOG_POSTS_TABLE,
+    Item: post
+  }));
+
+  return createResponse(201, { post }, event);
+}
+
+async function updateBlogPost(slug: string, event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  if (!event.body) {
+    return createResponse(400, { error: 'Request body is required' }, event);
+  }
+
+  const input = JSON.parse(event.body);
+  
+  const existing = await docClient.send(new QueryCommand({
+    TableName: BLOG_POSTS_TABLE,
+    IndexName: 'slug-index',
+    KeyConditionExpression: 'slug = :slug',
+    ExpressionAttributeValues: { ':slug': slug }
+  }));
+
+  if (!existing.Items || existing.Items.length === 0) {
+    return createResponse(404, { error: 'Blog post not found' }, event);
+  }
+
+  const existingPost = existing.Items[0];
+  
+  const updateExpressions: string[] = [];
+  const expressionAttributeNames: Record<string, string> = {};
+  const expressionAttributeValues: Record<string, any> = {};
+
+  Object.keys(input).forEach(key => {
+    if (key !== 'id' && key !== 'slug') {
+      updateExpressions.push(`#${key} = :${key}`);
+      expressionAttributeNames[`#${key}`] = key;
+      expressionAttributeValues[`:${key}`] = input[key];
+    }
   });
+
+  updateExpressions.push('#updatedAt = :updatedAt');
+  expressionAttributeNames['#updatedAt'] = 'updatedAt';
+  expressionAttributeValues[':updatedAt'] = Date.now();
+
+  await docClient.send(new UpdateCommand({
+    TableName: BLOG_POSTS_TABLE,
+    Key: { id: existingPost.id },
+    UpdateExpression: `SET ${updateExpressions.join(', ')}`,
+    ExpressionAttributeNames: expressionAttributeNames,
+    ExpressionAttributeValues: expressionAttributeValues
+  }));
+
+  return createResponse(200, { message: 'Blog post updated successfully' }, event);
+}
+
+async function deleteBlogPost(slug: string, event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  const existing = await docClient.send(new QueryCommand({
+    TableName: BLOG_POSTS_TABLE,
+    IndexName: 'slug-index',
+    KeyConditionExpression: 'slug = :slug',
+    ExpressionAttributeValues: { ':slug': slug }
+  }));
+
+  if (!existing.Items || existing.Items.length === 0) {
+    return createResponse(404, { error: 'Blog post not found' }, event);
+  }
+
+  await docClient.send(new DeleteCommand({
+    TableName: BLOG_POSTS_TABLE,
+    Key: { id: existing.Items[0].id }
+  }));
+
+  return createResponse(200, { message: 'Blog post deleted successfully' }, event);
+}
+
+async function reorderBlogPosts(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  if (!event.body) {
+    return createResponse(400, { error: 'Request body is required' }, event);
+  }
+
+  const { items } = JSON.parse(event.body);
+  
+  for (const item of items) {
+    await docClient.send(new UpdateCommand({
+      TableName: BLOG_POSTS_TABLE,
+      Key: { id: item.id },
+      UpdateExpression: 'SET #order = :order, #updatedAt = :updatedAt',
+      ExpressionAttributeNames: {
+        '#order': 'order',
+        '#updatedAt': 'updatedAt'
+      },
+      ExpressionAttributeValues: {
+        ':order': item.order,
+        ':updatedAt': Date.now()
+      }
+    }));
+  }
+
+  return createResponse(200, { message: 'Blog posts reordered successfully' }, event);
 }
