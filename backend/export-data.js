@@ -122,6 +122,36 @@ async function exportProjects() {
       const interfaceMatch = existingContent.match(/^([\s\S]*?)(export const projects)/);
       if (interfaceMatch) {
         interfaceDefinition = interfaceMatch[1].trim();
+        
+        // Ensure the interface includes DynamoDB metadata fields
+        // Add id, createdAt, updatedAt, and order if they're missing
+        const needsId = !interfaceDefinition.match(/\bid\??\s*:/);
+        const needsOrder = !interfaceDefinition.match(/\border\??\s*:/);
+        const needsCreatedAt = !interfaceDefinition.match(/\bcreatedAt\??\s*:/);
+        const needsUpdatedAt = !interfaceDefinition.match(/\bupdatedAt\??\s*:/);
+        
+        if (needsId || needsOrder || needsCreatedAt || needsUpdatedAt) {
+          // Find the closing brace of the interface and add fields before it
+          const lastBraceIndex = interfaceDefinition.lastIndexOf('}');
+          if (lastBraceIndex > 0) {
+            const beforeBrace = interfaceDefinition.substring(0, lastBraceIndex).trim();
+            const afterBrace = interfaceDefinition.substring(lastBraceIndex);
+            
+            // Build the fields to add
+            const fieldsToAdd = [];
+            if (needsId) fieldsToAdd.push('  id?: string;');
+            if (needsOrder) fieldsToAdd.push('  order?: number;');
+            if (needsCreatedAt) fieldsToAdd.push('  createdAt?: number;');
+            if (needsUpdatedAt) fieldsToAdd.push('  updatedAt?: number;');
+            
+            if (fieldsToAdd.length > 0) {
+              interfaceDefinition = beforeBrace + 
+                (beforeBrace.endsWith(';') || beforeBrace.endsWith('}') ? '' : '') +
+                '\n' + fieldsToAdd.join('\n') +
+                afterBrace;
+            }
+          }
+        }
       }
     }
     
@@ -240,6 +270,36 @@ async function exportBlogPosts() {
       const interfaceMatch = existingContent.match(/^([\s\S]*?)(export const blogPosts)/);
       if (interfaceMatch) {
         interfaceDefinition = interfaceMatch[1].trim();
+        
+        // Ensure the interface includes DynamoDB metadata fields
+        // Add id, createdAt, updatedAt, and order if they're missing
+        const needsId = !interfaceDefinition.match(/\bid\??\s*:/);
+        const needsOrder = !interfaceDefinition.match(/\border\??\s*:/);
+        const needsCreatedAt = !interfaceDefinition.match(/\bcreatedAt\??\s*:/);
+        const needsUpdatedAt = !interfaceDefinition.match(/\bupdatedAt\??\s*:/);
+        
+        if (needsId || needsOrder || needsCreatedAt || needsUpdatedAt) {
+          // Find the closing brace of the interface and add fields before it
+          const lastBraceIndex = interfaceDefinition.lastIndexOf('}');
+          if (lastBraceIndex > 0) {
+            const beforeBrace = interfaceDefinition.substring(0, lastBraceIndex).trim();
+            const afterBrace = interfaceDefinition.substring(lastBraceIndex);
+            
+            // Build the fields to add
+            const fieldsToAdd = [];
+            if (needsId) fieldsToAdd.push('  id?: string;');
+            if (needsOrder) fieldsToAdd.push('  order?: number;');
+            if (needsCreatedAt) fieldsToAdd.push('  createdAt?: number;');
+            if (needsUpdatedAt) fieldsToAdd.push('  updatedAt?: number;');
+            
+            if (fieldsToAdd.length > 0) {
+              interfaceDefinition = beforeBrace + 
+                (beforeBrace.endsWith(';') || beforeBrace.endsWith('}') ? '' : '') +
+                '\n' + fieldsToAdd.join('\n') +
+                afterBrace;
+            }
+          }
+        }
       }
     }
     
