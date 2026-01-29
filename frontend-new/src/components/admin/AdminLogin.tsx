@@ -14,6 +14,7 @@ const AdminLogin: FC = () => {
 
     try {
       await apiClient.login(username, password);
+      // Use href instead of replace to allow ViewTransitions to work properly
       window.location.href = '/admin';
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');

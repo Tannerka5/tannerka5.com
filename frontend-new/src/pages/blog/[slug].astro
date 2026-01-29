@@ -1,14 +1,20 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { blogPosts } from '../../../data/blog-posts';
+import { getBlogPostsPublic } from '../../lib/api-server';
 
-export function getStaticPaths() {
-  return blogPosts
-    .filter(post => post.published)
-    .map((post) => ({
+export async function getStaticPaths() {
+  try {
+    const response = await getBlogPostsPublic();
+    const publishedPosts = (response.posts || []).filter((post: any) => post.published);
+    
+    return publishedPosts.map((post: any) => ({
       params: { slug: post.slug },
       props: { post },
     }));
+  } catch (error) {
+    console.error('Failed to fetch blog posts for static paths:', error);
+    return [];
+  }
 }
 
 const { post } = Astro.props;
@@ -74,23 +80,30 @@ const formatDate = (dateString: string) => {
         />
       )}
 
-      {/* Content Placeholder */}
+      {/* Content */}
       <div class="prose prose-lg dark:prose-invert max-w-none">
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl border border-sage/10 dark:border-gray-700 mb-8">
-          <p class="text-lg text-earth/80 dark:text-gray-300 leading-relaxed mb-6">
-            {post.excerpt}
-          </p>
-          
-          <div class="space-y-4 text-earth/70 dark:text-gray-400">
-            <p class="text-center italic">
-              📝 Full article content coming soon...
+        {post.content ? (
+          <div 
+            class="bg-white dark:bg-gray-800 p-8 rounded-xl border border-sage/10 dark:border-gray-700 mb-8"
+            set:html={post.content}
+          />
+        ) : (
+          <div class="bg-white dark:bg-gray-800 p-8 rounded-xl border border-sage/10 dark:border-gray-700 mb-8">
+            <p class="text-lg text-earth/80 dark:text-gray-300 leading-relaxed mb-6">
+              {post.excerpt}
             </p>
-            <p class="text-sm">
-              This blog post will include detailed technical writeups, code examples, 
-              architecture diagrams, and lessons learned from building real-world projects.
-            </p>
+            
+            <div class="space-y-4 text-earth/70 dark:text-gray-400">
+              <p class="text-center italic">
+                📝 Full article content coming soon...
+              </p>
+              <p class="text-sm">
+                This blog post will include detailed technical writeups, code examples, 
+                architecture diagrams, and lessons learned from building real-world projects.
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Related Posts Section */}
         <div class="mt-12 p-6 bg-cream dark:bg-gray-900 rounded-xl">

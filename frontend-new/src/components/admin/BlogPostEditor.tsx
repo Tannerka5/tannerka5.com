@@ -1,15 +1,17 @@
 import { useState, useEffect, type FC } from 'react';
 import { apiClient } from '../../lib/api';
 import type { BlogPost } from '../../../data/blog-posts';
+import FileUpload from './FileUpload';
+import SimpleRichTextEditor from './SimpleRichTextEditor';
 
 interface BlogPostEditorProps {
-  post?: Partial<BlogPost> | null;
+  post?: Partial<BlogPost & { content?: string }> | null;
   onSave: () => void;
   onCancel: () => void;
 }
 
 const BlogPostEditor: FC<BlogPostEditorProps> = ({ post, onSave, onCancel }) => {
-  const [formData, setFormData] = useState<Partial<BlogPost>>({
+  const [formData, setFormData] = useState<Partial<BlogPost & { content?: string }>>({
     title: '',
     slug: '',
     excerpt: '',
@@ -19,13 +21,17 @@ const BlogPostEditor: FC<BlogPostEditorProps> = ({ post, onSave, onCancel }) => 
     published: false,
     coverImage: '',
     author: 'Tanner Atkinson',
+    content: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (post) {
-      setFormData(post);
+      setFormData({
+        ...post,
+        content: (post as any).content || '',
+      });
     }
   }, [post]);
 
@@ -72,7 +78,7 @@ const BlogPostEditor: FC<BlogPostEditorProps> = ({ post, onSave, onCancel }) => 
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-display font-bold text-earth dark:text-gray-100">
           {post ? 'Edit Blog Post' : 'New Blog Post'}
@@ -139,6 +145,26 @@ const BlogPostEditor: FC<BlogPostEditorProps> = ({ post, onSave, onCancel }) => 
           />
         </div>
 
+        {/* Cover Image Upload */}
+        <FileUpload
+          currentUrl={formData.coverImage}
+          onUploadComplete={(url) => setFormData((prev) => ({ ...prev, coverImage: url }))}
+          accept="image/*"
+          label="Cover Image"
+        />
+
+        {/* Content Editor */}
+        <div>
+          <label className="block text-sm font-medium text-earth dark:text-gray-300 mb-2">
+            Content
+          </label>
+          <SimpleRichTextEditor
+            value={formData.content || ''}
+            onChange={(content) => setFormData((prev) => ({ ...prev, content }))}
+            placeholder="Write your blog post content here..."
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-earth dark:text-gray-300 mb-2">
@@ -176,18 +202,6 @@ const BlogPostEditor: FC<BlogPostEditorProps> = ({ post, onSave, onCancel }) => 
               className="w-full px-4 py-2 border border-sage/20 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-earth dark:text-gray-100"
             />
           </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-earth dark:text-gray-300 mb-2">
-            Cover Image URL
-          </label>
-          <input
-            type="url"
-            value={formData.coverImage || ''}
-            onChange={(e) => setFormData((prev) => ({ ...prev, coverImage: e.target.value }))}
-            className="w-full px-4 py-2 border border-sage/20 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-earth dark:text-gray-100"
-          />
         </div>
 
         <div>

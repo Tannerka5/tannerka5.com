@@ -11,7 +11,7 @@ const AdminDashboard: FC = () => {
   useEffect(() => {
     const token = apiClient.getToken();
     if (!token) {
-      window.location.href = '/admin/login';
+      window.location.replace('/admin/login');
       return;
     }
     setIsAuthenticated(true);

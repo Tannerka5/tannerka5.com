@@ -9,7 +9,10 @@
     "clean": "rm -rf dist lambda.zip",
     "package": "npm run build && npm run zip",
     "zip": "powershell Compress-Archive -Path dist/*,node_modules -DestinationPath lambda.zip -Force",
-    "deploy": "npm run clean && npm run package"
+    "deploy": "npm run clean && npm run package",
+    "export": "node export-data.js",
+    "export:projects": "node export-data.js --projects-only",
+    "export:blog": "node export-data.js --blog-only"
   },
   "keywords": [
     "aws",
@@ -23,9 +26,11 @@
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.958.0",
+    "@aws-sdk/client-s3": "^3.966.0",
     "@aws-sdk/lib-dynamodb": "^3.958.0",
-    "jsonwebtoken": "^9.0.2",
+    "@aws-sdk/s3-request-presigner": "^3.966.0",
     "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

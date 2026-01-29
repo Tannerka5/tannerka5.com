@@ -1,9 +1,18 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogGrid from '../../components/blog/BlogGrid';
-import { blogPosts } from '../../../data/blog-posts';
+import { getBlogPostsPublic } from '../../lib/api-server';
 
-const publishedPosts = blogPosts.filter(post => post.published);
+// Fetch blog posts from API
+let publishedPosts: any[] = [];
+try {
+  const response = await getBlogPostsPublic();
+  publishedPosts = (response.posts || []).filter((post: any) => post.published);
+} catch (error) {
+  console.error('Failed to fetch blog posts:', error);
+  // Fallback to empty array if API fails
+  publishedPosts = [];
+}
 ---
 
 <BaseLayout 

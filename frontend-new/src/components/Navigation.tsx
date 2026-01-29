@@ -21,6 +21,13 @@ const Navigation: FC<NavProps> = ({ currentPath = "/" }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Normalize path for comparison (remove trailing slash except for root)
+  const normalizePath = useCallback((path: string) => {
+    return path === '/' ? '/' : path.replace(/\/$/, '');
+  }, []);
+
+  const normalizedCurrentPath = useMemo(() => normalizePath(currentPath), [currentPath, normalizePath]);
+
   // Check authentication status
   const checkAuth = useCallback(() => {
     const token = apiClient.getToken();
@@ -71,10 +78,11 @@ const Navigation: FC<NavProps> = ({ currentPath = "/" }) => {
   const handleLogout = useCallback(() => {
     apiClient.logout();
     setIsAuthenticated(false);
-    if (currentPath?.startsWith('/admin')) {
+    if (normalizedCurrentPath?.startsWith('/admin')) {
+      // Use href to ensure proper navigation (ViewTransitions disabled on admin pages)
       window.location.href = '/';
     }
-  }, [currentPath]);
+  }, [normalizedCurrentPath]);
 
   const [hasMounted, setHasMounted] = useState(false);
 
@@ -109,39 +117,43 @@ const Navigation: FC<NavProps> = ({ currentPath = "/" }) => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className={`relative text-sm font-medium transition-colors duration-200 ${
-                    currentPath === link.href
-                      ? "text-primary dark:text-accent-light"
-                      : "text-earth/70 dark:text-gray-300 hover:text-primary dark:hover:text-accent-light"
-                  }`}
-                >
-                  {link.label}
-                  {currentPath === link.href && (
-                    <motion.div
-                      layoutId="activeNav"
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-accent"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                </a>
-              ))}
+              {navLinks.map((link) => {
+                const normalizedLinkHref = normalizePath(link.href);
+                const isActive = normalizedCurrentPath === normalizedLinkHref;
+                return (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className={`relative text-sm font-medium transition-colors duration-200 ${
+                      isActive
+                        ? "text-primary dark:text-accent-light"
+                        : "text-earth/70 dark:text-gray-300 hover:text-primary dark:hover:text-accent-light"
+                    }`}
+                  >
+                    {link.label}
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeNav"
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-accent"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </a>
+                );
+              })}
               {isAuthenticated && (
                 <motion.a
                   href="/admin"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={`relative text-sm font-medium transition-colors duration-200 ${
-                    currentPath === '/admin'
+                    normalizedCurrentPath === '/admin'
                       ? "text-primary dark:text-accent-light"
                       : "text-earth/70 dark:text-gray-300 hover:text-primary dark:hover:text-accent-light"
                   }`}
                 >
                   Admin
-                  {currentPath === '/admin' && (
+                  {normalizedCurrentPath === '/admin' && (
                     <motion.div
                       layoutId="activeNavAdmin"
                       className="absolute -bottom-1 left-0 right-0 h-0.5 bg-accent"
@@ -237,25 +249,38 @@ const Navigation: FC<NavProps> = ({ currentPath = "/" }) => {
             transition={{ duration: 0.3, delay: 0.1 }}
             className="flex-1 flex flex-col justify-center space-y-6"
           >
-            {navLinks.map((link, index) => (
-              <motion.a
-                key={link.href}
-                href={link.href}
-                initial={false}
-                animate={{
-                  x: isMobileMenuOpen ? 0 : -20,
-                  opacity: isMobileMenuOpen ? 1 : 0,
-                }}
-                transition={{ duration: 0.3, delay: 0.1 + index * 0.05 }}
-                className={`text-2xl font-medium ${
-                  currentPath === link.href
-                    ? "text-primary dark:text-accent-light"
-                    : "text-earth dark:text-gray-200 hover:text-primary dark:hover:text-accent-light"
-                }`}
-              >
-                {link.label}
-              </motion.a>
-            ))}
+            {navLinks.map((link, index) => {
+              const normalizedLinkHref = normalizePath(link.href);
+              const isActive = normalizedCurrentPath === normalizedLinkHref;
+              const handleClick = normalizedCurrentPath?.startsWith('/admin')
+                ? (e: React.MouseEvent<HTMLAnchorElement>) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = link.href;
+                  }
+                : undefined;
+              
+              return (
+                <motion.a
+                  key={link.href}
+                  href={link.href}
+                  onClick={handleClick}
+                  initial={false}
+                  animate={{
+                    x: isMobileMenuOpen ? 0 : -20,
+                    opacity: isMobileMenuOpen ? 1 : 0,
+                  }}
+                  transition={{ duration: 0.3, delay: 0.1 + index * 0.05 }}
+                  className={`text-2xl font-medium ${
+                    isActive
+                      ? "text-primary dark:text-accent-light"
+                      : "text-earth dark:text-gray-200 hover:text-primary dark:hover:text-accent-light"
+                  }`}
+                >
+                  {link.label}
+                </motion.a>
+              );
+            })}
             
             {isAuthenticated && (
               <motion.a
@@ -267,7 +292,7 @@ const Navigation: FC<NavProps> = ({ currentPath = "/" }) => {
                 }}
                 transition={{ duration: 0.3, delay: 0.35 }}
                 className={`text-2xl font-medium ${
-                  currentPath === '/admin'
+                  normalizedCurrentPath === '/admin'
                     ? "text-primary dark:text-accent-light"
                     : "text-earth dark:text-gray-200 hover:text-primary dark:hover:text-accent-light"
                 }`}

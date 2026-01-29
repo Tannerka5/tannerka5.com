@@ -4,7 +4,6 @@ import { memo, useState, useEffect } from "react";
 import ProjectCard from "./ProjectCard";
 import AnimatedDivider from "../AnimatedDivider";
 import AnimatedCounter from "../AnimatedCounter";
-import { projects } from "../../../data/projects";
 
 const STATS = [
   { value: 3, suffix: "+", label: "Projects Deployed" },
@@ -12,7 +11,11 @@ const STATS = [
   { value: 100, suffix: "%", label: "Uptime on AWS" },
 ] as const;
 
-const ProjectGrid: FC = memo(() => {
+interface ProjectGridProps {
+  projects?: any[];
+}
+
+const ProjectGrid: FC<ProjectGridProps> = memo(({ projects = [] }) => {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {

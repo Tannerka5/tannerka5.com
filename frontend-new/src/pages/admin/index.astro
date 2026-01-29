@@ -4,5 +4,31 @@ import AdminDashboard from '../../components/admin/AdminDashboard';
 ---
 
 <BaseLayout title="Admin Dashboard">
+  <script is:inline>
+    // Unregister service worker on admin pages to prevent interference
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+
+    // Force hard reload for all navigation from admin pages to bypass ViewTransitions
+    // This prevents ViewTransitions from trying to load assets during transition
+    (function() {
+      if (typeof document !== 'undefined') {
+        document.addEventListener('click', function(e) {
+          const target = e.target.closest('a[href^="/"]');
+          if (target && target.href && !target.href.includes('/admin')) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            // Use location.assign to force full page reload
+            window.location.assign(target.getAttribute('href'));
+          }
+        }, true);
+      }
+    })();
+  </script>
   <AdminDashboard client:load />
 </BaseLayout>

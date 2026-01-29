@@ -1,27 +1,28 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ProjectDetailHero from '../../components/projects/ProjectDetailHero';
-import ProjectTechStack from '../../components/projects/ProjectTechStack';
-import ProjectOverview from '../../components/projects/ProjectOverview';
-import ProjectChallenges from '../../components/projects/ProjectChallenges';
-import ProjectLearnings from '../../components/projects/ProjectLearnings';
-import ProjectMetrics from '../../components/projects/ProjectMetrics';
-import ProjectMedia from '../../components/projects/ProjectMedia';
-import ProjectNavigation from '../../components/projects/ProjectNavigation';
-import AnimatedDivider from '../../components/AnimatedDivider';
+import ProjectDetailPage from '../../components/projects/ProjectDetailPage';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ProjectSchema from '../../components/ProjectSchema.astro';
-import { projects } from '../../../data/projects';
+import { getProjectsPublic } from '../../lib/api-server';
 
-export function getStaticPaths() {
-  return projects.map((project) => ({
-    params: { slug: project.slug },
-    props: { project },
-  }));
+export async function getStaticPaths() {
+  try {
+    const response = await getProjectsPublic();
+    const projects = response.projects || [];
+    
+    return projects.map((project: any) => ({
+      params: { slug: project.slug },
+      props: { project, allProjects: projects },
+    }));
+  } catch (error) {
+    console.error('Failed to fetch projects for static paths:', error);
+    return [];
+  }
 }
 
-const { project } = Astro.props;
-const allSlugs = projects.map((p) => p.slug);
+const { project, allProjects } = Astro.props;
+const allSlugs = (allProjects || []).map((p: any) => p.slug);
+const apiBaseUrl = import.meta.env.PUBLIC_API_URL || import.meta.env.PUBLIC_API_BASE_URL || 'https://api.tannerka5.com';
 ---
 
 <BaseLayout 
@@ -50,54 +51,10 @@ const allSlugs = projects.map((p) => p.slug);
     url={project.links.live}
   />
 
-  <ProjectDetailHero
-    client:visible
-    title={project.title}
-    role={project.role}
-    timeline={project.timeline}
-    gradientFrom={project.gradientFrom}
-    gradientVia={project.gradientVia}
-    gradientTo={project.gradientTo}
-    logo={project.logo}
-    icon={project.icon}
-    links={project.links}
+  <ProjectDetailPage
+    client:load
+    initialProject={project}
+    allSlugs={allSlugs}
+    apiBaseUrl={apiBaseUrl}
   />
-
-  <AnimatedDivider client:visible color="#6B9080" />
-
-  <ProjectTechStack client:visible techStack={project.techStack} />
-
-  <AnimatedDivider client:visible color="#2E5266" />
-  
-  <ProjectOverview
-    client:visible
-    fullDescription={project.fullDescription}
-    overview={project.detailed.overview}
-    problem={project.detailed.problem}
-    solution={project.detailed.solution}
-  />
-
-  <AnimatedDivider client:visible color="#6B9080" />
-  
-  <ProjectChallenges client:visible challenges={project.detailed.challenges} />
-
-  <AnimatedDivider client:visible color="#2E5266" />
-  
-  <ProjectLearnings
-    client:visible
-    learnings={project.detailed.learnings}
-    features={project.detailed.features}
-  />
-
-  <AnimatedDivider client:visible color="#6B9080" />
-  
-  <ProjectMetrics client:visible metrics={project.detailed.metrics} />
-
-  <AnimatedDivider client:visible color="#2E5266" />
-  
-  <ProjectMedia client:visible media={project.detailed.media} />
-
-  <AnimatedDivider client:visible color="#6B9080" />
-  
-  <ProjectNavigation client:visible currentSlug={project.slug} allSlugs={allSlugs} />
 </BaseLayout>

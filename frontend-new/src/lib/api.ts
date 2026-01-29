@@ -5,10 +5,10 @@ const API_BASE_URL =
   import.meta.env.PUBLIC_API_BASE_URL || 
   'https://api.tannerka5.com';
 
-// Log API URL in development mode for debugging
-if (import.meta.env.DEV && typeof window !== 'undefined') {
+// Log API URL for debugging (always log, not just in dev)
+if (typeof window !== 'undefined') {
   console.log('[API Client] API Base URL:', API_BASE_URL);
-  if (!import.meta.env.PUBLIC_API_URL) {
+  if (!import.meta.env.PUBLIC_API_URL && !import.meta.env.PUBLIC_API_BASE_URL) {
     console.warn(
       '[API Client] Warning: PUBLIC_API_URL not set in .env file. Using default:', 
       API_BASE_URL
@@ -56,12 +56,35 @@ class ApiClient {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    // Construct full URL - ensure no double slashes
+    const fullUrl = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+    
+    // Debug logging for upload requests
+    if (endpoint.includes('/upload')) {
+      console.log('[API Client] Upload request:', {
+        endpoint,
+        fullUrl,
+        apiBaseUrl: API_BASE_URL,
+        hasToken: !!token
+      });
+    }
+
+    const response = await fetch(fullUrl, {
       ...options,
       headers,
     });
 
     if (!response.ok) {
+      // Enhanced error logging for debugging
+      if (endpoint.includes('/upload')) {
+        console.error('[API Client] Upload request failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: fullUrl,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+      }
+      
       if (response.status === 401) {
         this.clearToken();
         throw new Error('Unauthorized');
@@ -157,6 +180,47 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({ items }),
     });
+  }
+
+  // Upload
+  async getUploadUrl(filename: string, contentType: string, fileSize?: number) {
+    return this.request<{ uploadUrl: string; url: string; key: string; expiresIn: number }>('/upload', {
+      method: 'POST',
+      body: JSON.stringify({ filename, contentType, fileSize }),
+    });
+  }
+
+  // Public GET methods (don't require auth, but won't fail if token is present)
+  async getProjectsPublic() {
+    const response = await fetch(`${API_BASE_URL}/projects`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    return response.json() as Promise<{ projects: any[] }>;
+  }
+
+  async getProjectPublic(slug: string) {
+    const response = await fetch(`${API_BASE_URL}/projects/${slug}`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    return response.json() as Promise<{ project: any }>;
+  }
+
+  async getBlogPostsPublic() {
+    const response = await fetch(`${API_BASE_URL}/blog-posts`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    return response.json() as Promise<{ posts: any[] }>;
+  }
+
+  async getBlogPostPublic(slug: string) {
+    const response = await fetch(`${API_BASE_URL}/blog-posts/${slug}`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    return response.json() as Promise<{ post: any }>;
   }
 }
 
