@@ -58,7 +58,7 @@ const AboutContent: FC = () => {
                   Get In Touch
                 </motion.a>
                 <motion.a
-                  href="/resume/tanner-atkinson-resume.pdf"
+                  href="/resume/Tanner_Atkinson_Resume.pdf"
                   download
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
