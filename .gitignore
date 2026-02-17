@@ -23,5 +23,5 @@ node_modules/
 
 # Temporary files
 generate-hash.js
-ADMIN_SETUP.md
-LAMBDA_SETUP_GUIDE.md
+/*.md
+!/README.md
