@@ -55,13 +55,13 @@ Monthly AWS costs kept under $3 by:
 
 ### Frontend
 
-- cd frontend
+- cd app
 - Edit HTML files directly
 - Upload to S3 when ready
 
 ### Backend
 
-- cd backend
+- cd server
 - npm install
 - npm run build # Compile TypeScript
 - npm run deploy # Package for Lambda deployment

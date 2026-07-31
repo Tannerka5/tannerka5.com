@@ -7,10 +7,10 @@ Thumbs.db
 .idea/
 
 # Backend
-backend/node_modules/
-backend/dist/
-backend/lambda.zip
-backend/*.log
+server/node_modules/
+server/dist/
+server/lambda.zip
+server/*.log
 
 # Temporary files
 *.tmp

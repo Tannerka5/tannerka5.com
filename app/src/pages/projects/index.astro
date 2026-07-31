@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectGrid from '../../components/projects/ProjectGrid';
+import { getProjectsPublic } from '../../lib/api-server';
+import type { Project } from '../../types/project';
+
+// Fetch projects from API
+let projects: Project[] = [];
+try {
+    const response = await getProjectsPublic();
+    projects = response.projects || [];
+} catch (error) {
+    console.error('Failed to fetch projects:', error);
+    // Fallback to empty array if API fails
+    projects = [];
+}
+---
+
+<BaseLayout title="Projects | Tanner Atkinson">
+    <ProjectGrid client:visible projects={projects} />
+</BaseLayout>
