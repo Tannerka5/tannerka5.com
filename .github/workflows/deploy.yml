@@ -5,7 +5,13 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      target:
+        description: What to deploy (content-sync.yml uses "frontend" to publish admin edits)
+        type: choice
+        options: [all, frontend, backend]
+        default: all
 
 permissions:
   contents: read
@@ -23,8 +29,8 @@ jobs:
   verify-app:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -39,8 +45,8 @@ jobs:
   verify-server:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -61,8 +67,8 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
       backend: ${{ steps.filter.outputs.backend }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |
@@ -78,15 +84,16 @@ jobs:
     needs: [verify-app, changes]
     if: >-
       github.event_name != 'pull_request' &&
-      (needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch')
+      (needs.changes.outputs.frontend == 'true' ||
+       (github.event_name == 'workflow_dispatch' && inputs.target != 'backend'))
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -95,6 +102,18 @@ jobs:
       - name: Install dependencies
         working-directory: app
         run: npm ci
+
+      # Fingerprint the API content BEFORE building, so an edit made while the
+      # build is running isn't recorded as already deployed. content-sync.yml
+      # compares this against the live content to decide when to rebuild.
+      - name: Fingerprint published content
+        id: content
+        env:
+          PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
+        run: |
+          hash=$(bash .github/scripts/content-hash.sh)
+          echo "hash=$hash" >> "$GITHUB_OUTPUT"
+          echo "$hash" > content-hash.txt
 
       - name: Build
         working-directory: app
@@ -114,7 +133,7 @@ jobs:
           npm run build
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
@@ -139,19 +158,28 @@ jobs:
             --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} \
             --paths "/*"
 
+      # Only reached when everything above succeeded, so a failed deploy is
+      # retried by the next content-sync run.
+      - name: Record deployed content fingerprint
+        uses: actions/cache/save@v6
+        with:
+          path: content-hash.txt
+          key: content-${{ steps.content.outputs.hash }}
+
   deploy-backend:
     needs: [verify-server, changes]
     if: >-
       github.event_name != 'pull_request' &&
-      (needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch')
+      (needs.changes.outputs.backend == 'true' ||
+       (github.event_name == 'workflow_dispatch' && inputs.target != 'frontend'))
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -166,7 +194,7 @@ jobs:
         run: npm run package
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
@@ -181,3 +209,20 @@ jobs:
         run: |
           aws lambda wait function-updated \
             --function-name ${{ vars.LAMBDA_FUNCTION_NAME }}
+
+      # Freeze what was just deployed as an immutable Lambda version, labelled
+      # with the commit. rollback-backend.yml restores any of these.
+      - name: Publish immutable version (rollback point)
+        run: |
+          aws lambda publish-version \
+            --function-name ${{ vars.LAMBDA_FUNCTION_NAME }} \
+            --description "${GITHUB_SHA::7} run ${{ github.run_id }}" \
+            --query Version --output text
+
+      - name: Smoke test API
+        env:
+          PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
+        run: |
+          curl -fsS --retry 5 --retry-delay 5 --max-time 30 \
+            "${PUBLIC_API_URL%/}/projects" -o /dev/null
+          echo "API responded OK"
