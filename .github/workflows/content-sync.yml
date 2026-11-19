@@ -1,0 +1,74 @@
+name: Content sync
+
+# The site is statically generated from the API (projects + blog posts), so an
+# edit made in the admin panel only appears after a rebuild. This workflow polls
+# the API every 15 minutes and triggers a frontend-only deploy when the content
+# differs from what was last deployed.
+#
+# Notes:
+# - Scheduled workflows only run on the default branch, and GitHub disables
+#   them after 60 days without repository activity on public repos. If edits
+#   stop appearing, re-enable it under Actions -> Content sync.
+# - "Run workflow" here forces a check immediately.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  actions: write # needed to dispatch deploy.yml with the built-in token
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/scripts
+
+      - name: Fingerprint current published content
+        id: hash
+        env:
+          PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
+        run: |
+          hash=$(bash .github/scripts/content-hash.sh)
+          echo "hash=$hash" >> "$GITHUB_OUTPUT"
+          echo "Current content fingerprint: $hash"
+
+      # deploy.yml saves a cache entry keyed by the fingerprint of every
+      # content version it successfully deployed. A hit means "already live".
+      - name: Is this content already deployed?
+        id: deployed
+        uses: actions/cache/restore@v6
+        with:
+          path: content-hash.txt
+          key: content-${{ steps.hash.outputs.hash }}
+          lookup-only: true
+
+      - name: Is a deploy already running or queued?
+        id: busy
+        if: steps.deployed.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          count=0
+          for status in in_progress queued; do
+            n=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow deploy.yml \
+                  --status "$status" --json databaseId --jq length)
+            count=$((count + n))
+          done
+          echo "active=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Content changed - trigger frontend deploy
+        if: steps.deployed.outputs.cache-hit != 'true' && steps.busy.outputs.active == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run deploy.yml --repo "$GITHUB_REPOSITORY" --ref main -f target=frontend
+          echo "Triggered frontend deploy for new content."
+
+      - name: Nothing to do
+        if: steps.deployed.outputs.cache-hit == 'true'
+        run: echo "Content unchanged since last deploy."

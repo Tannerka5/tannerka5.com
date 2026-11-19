@@ -1,0 +1,78 @@
+name: Rollback backend
+
+# Restores a previously deployed Lambda version as the live code.
+# Every successful backend deploy publishes an immutable version whose
+# description is "<short commit sha> run <run id>" -- run this workflow once to
+# see the list (it prints versions before doing anything), then run it again
+# with the version you want.
+#
+# To roll back the frontend instead: Actions -> the older successful Deploy run
+# -> "Re-run all jobs" (re-runs use that run's commit), or git revert + push.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Lambda version number to restore (e.g. 7). Must already exist.
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+# Share the deploy lock so a rollback never races a deploy.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      FUNCTION_NAME: ${{ vars.LAMBDA_FUNCTION_NAME }}
+      VERSION: ${{ inputs.version }}
+      PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
+    steps:
+      - name: Validate input
+        run: |
+          if ! [[ "$VERSION" =~ ^[0-9]+$ ]]; then
+            echo "::error::version must be a plain number, got '$VERSION'"
+            exit 1
+          fi
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Show available versions
+        run: |
+          aws lambda list-versions-by-function \
+            --function-name "$FUNCTION_NAME" \
+            --query "Versions[?Version!='\$LATEST'].[Version,LastModified,Description]" \
+            --output table
+
+      - name: Download the code of version ${{ inputs.version }}
+        run: |
+          url=$(aws lambda get-function \
+            --function-name "$FUNCTION_NAME" --qualifier "$VERSION" \
+            --query Code.Location --output text)
+          curl -fsS "$url" -o rollback.zip
+          ls -l rollback.zip
+
+      - name: Restore it as the live code
+        run: |
+          aws lambda update-function-code \
+            --function-name "$FUNCTION_NAME" \
+            --zip-file fileb://rollback.zip
+          aws lambda wait function-updated --function-name "$FUNCTION_NAME"
+
+      - name: Smoke test API
+        run: |
+          curl -fsS --retry 5 --retry-delay 5 --max-time 30 \
+            "${PUBLIC_API_URL%/}/projects" -o /dev/null
+          echo "Rolled back to version $VERSION; API responded OK"
