@@ -61,7 +61,7 @@ jobs:
         working-directory: server
 
   changes:
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
       frontend: ${{ steps.filter.outputs.frontend }}
@@ -82,9 +82,13 @@ jobs:
   # ---------------------------------------------------------------------------
   deploy-frontend:
     needs: [verify-app, changes]
+    # push: deploy only if app/ changed. Manual runs ignore the path filter
+    # (it doesn't diff reliably outside a push) and obey the "target" input.
+    # !cancelled() + an explicit result check, because `changes` is skipped on
+    # manual runs and a skipped dependency would otherwise skip this job too.
     if: >-
-      github.event_name != 'pull_request' &&
-      (needs.changes.outputs.frontend == 'true' ||
+      !cancelled() && needs.verify-app.result == 'success' &&
+      ((github.event_name == 'push' && needs.changes.outputs.frontend == 'true') ||
        (github.event_name == 'workflow_dispatch' && inputs.target != 'backend'))
     runs-on: ubuntu-latest
     permissions:
@@ -169,8 +173,8 @@ jobs:
   deploy-backend:
     needs: [verify-server, changes]
     if: >-
-      github.event_name != 'pull_request' &&
-      (needs.changes.outputs.backend == 'true' ||
+      !cancelled() && needs.verify-server.result == 'success' &&
+      ((github.event_name == 'push' && needs.changes.outputs.backend == 'true') ||
        (github.event_name == 'workflow_dispatch' && inputs.target != 'frontend'))
     runs-on: ubuntu-latest
     permissions:
