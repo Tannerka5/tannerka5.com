@@ -3,13 +3,20 @@ import DOMPurify from 'isomorphic-dompurify';
 // Matches exactly what SimpleRichTextEditor's toolbar can produce — headings,
 // basic text formatting, lists, links, and images. Anything else (script,
 // iframe, svg, style, event handler attributes, etc.) is stripped.
+// 'b'/'i'/'div' are included alongside 'strong'/'em'/'p' because
+// document.execCommand (bold/italic) and contentEditable's own line-break
+// handling actually emit the legacy tags in most browsers -- without them,
+// the sanitizer silently discarded that formatting on every keystroke.
 const ALLOWED_TAGS = [
     'h1',
     'h2',
     'h3',
     'p',
+    'div',
     'strong',
+    'b',
     'em',
+    'i',
     'u',
     'ul',
     'ol',

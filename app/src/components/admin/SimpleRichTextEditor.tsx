@@ -32,16 +32,28 @@ const SimpleRichTextEditor: FC<SimpleRichTextEditorProps> = ({
     const editorRef = useRef<HTMLDivElement>(null);
     const [showImageDialog, setShowImageDialog] = useState(false);
     const [imageUrl, setImageUrl] = useState('');
+    // Tracks the last value *this component* emitted via onChange. Comparing
+    // the incoming `value` prop against the live (unsanitized) DOM innerHTML
+    // was always a false mismatch -- e.g. bold/italic normalize to <b>/<i> in
+    // the DOM but sanitizeHtml's serialized output differs slightly -- which
+    // reset innerHTML (and the cursor) on every keystroke. Comparing against
+    // the last value we ourselves produced means the DOM is only overwritten
+    // when `value` changes from an external source (e.g. loading a different
+    // post into the editor).
+    const lastEmittedValue = useRef(value);
 
     useEffect(() => {
-        if (editorRef.current && editorRef.current.innerHTML !== value) {
+        if (editorRef.current && value !== lastEmittedValue.current) {
             editorRef.current.innerHTML = sanitizeHtml(value);
+            lastEmittedValue.current = value;
         }
     }, [value]);
 
     const handleInput = () => {
         if (editorRef.current) {
-            onChange(sanitizeHtml(editorRef.current.innerHTML));
+            const sanitized = sanitizeHtml(editorRef.current.innerHTML);
+            lastEmittedValue.current = sanitized;
+            onChange(sanitized);
         }
     };
 

@@ -30,9 +30,11 @@ export function createAuthService(usersRepository: UsersRepository): AuthService
       }
 
       let user: User | null = null;
+      let queryError: unknown = null;
       try {
         user = await usersRepository.findByUsername(username);
       } catch (error) {
+        queryError = error;
         logger.error('Failed to query users table', {
           message: error instanceof Error ? error.message : String(error),
         });
@@ -73,6 +75,13 @@ export function createAuthService(usersRepository: UsersRepository): AuthService
             user: { username: 'admin', userId: adminUser.id },
           };
         }
+      }
+
+      // A DB outage should surface as a 500, not look identical to a wrong
+      // password -- only the admin-bootstrap path above is allowed to treat
+      // "couldn't query the table" the same as "no user found".
+      if (queryError) {
+        throw queryError instanceof Error ? queryError : new Error(String(queryError));
       }
 
       throw new UnauthorizedError('Invalid credentials');

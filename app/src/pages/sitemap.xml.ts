@@ -33,6 +33,7 @@ export const GET: APIRoute = async () => {
         { path: '/projects', changefreq: 'weekly', priority: '0.9' },
         { path: '/blog', changefreq: 'weekly', priority: '0.9' },
         { path: '/contact', changefreq: 'monthly', priority: '0.7' },
+        { path: '/privacy', changefreq: 'yearly', priority: '0.3' },
     ];
 
     const projectPages: SitemapPage[] = projects.map((project) => ({

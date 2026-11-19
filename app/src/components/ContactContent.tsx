@@ -65,6 +65,17 @@ const ContactContent: FC = () => {
                                     className="space-y-6"
                                     onSubmit={handleSubmit}
                                 >
+                                    {/* Honeypot: hidden from sighted users, but bots that
+                                        auto-fill every field will trip it. Formspree drops
+                                        any submission where this is non-empty. */}
+                                    <input
+                                        type="text"
+                                        name="_gotcha"
+                                        tabIndex={-1}
+                                        autoComplete="off"
+                                        aria-hidden="true"
+                                        className="hidden"
+                                    />
                                     <motion.div
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}

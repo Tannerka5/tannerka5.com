@@ -47,7 +47,7 @@ describe('deriveSlug', () => {
   });
 
   it('derives a slug from the title when slug is absent', () => {
-    expect(deriveSlug({ title: 'My Cool Project!' })).toBe('my-cool-project-');
+    expect(deriveSlug({ title: 'My Cool Project!' })).toBe('my-cool-project');
   });
 
   it('throws ValidationError when both slug and title are missing', () => {
@@ -56,6 +56,17 @@ describe('deriveSlug', () => {
 
   it('falls back to the title when slug is an empty string', () => {
     expect(deriveSlug({ title: 'Fallback Title', slug: '   ' })).toBe('fallback-title');
+  });
+
+  it('normalizes a client-supplied slug the same way as a derived one', () => {
+    expect(deriveSlug({ title: 'ignored', slug: 'My Slug' })).toBe('my-slug');
+    expect(deriveSlug({ title: 'ignored', slug: 'foo/bar' })).toBe('foo-bar');
+  });
+
+  it('throws ValidationError when the supplied slug has no alphanumeric characters', () => {
+    expect(() => deriveSlug({ title: 'ignored', slug: '!!!' })).toThrow(
+      'slug must contain at least one alphanumeric character'
+    );
   });
 });
 
@@ -109,4 +120,13 @@ describe('validateReorderInput', () => {
       'items[0] must have a string id and numeric order'
     );
   });
+
+  it.each([NaN, Infinity, -Infinity])(
+    'throws ValidationError when order is %s',
+    (order) => {
+      expect(() => validateReorderInput({ items: [{ id: 'a', order }] })).toThrow(
+        'items[0] must have a string id and numeric order'
+      );
+    }
+  );
 });

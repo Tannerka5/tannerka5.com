@@ -27,12 +27,22 @@ const FileUpload: FC<FileUploadProps> = ({
     const [uploadedUrl, setUploadedUrl] = useState<string | null>(currentUrl || null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const xhrRef = useRef<XMLHttpRequest | null>(null);
     const inputId = useId();
 
     // Check authentication status
     useEffect(() => {
         const token = apiClient.getToken();
         setIsAuthenticated(!!token);
+    }, []);
+
+    // Abort any in-flight upload if the component unmounts (e.g. the user
+    // cancels the dialog this is rendered in) so its completion handler can't
+    // fire afterwards and insert/report a URL nobody asked for anymore.
+    useEffect(() => {
+        return () => {
+            xhrRef.current?.abort();
+        };
     }, []);
 
     // Update uploadedUrl when currentUrl prop changes
@@ -78,6 +88,7 @@ const FileUpload: FC<FileUploadProps> = ({
 
             // Upload file to S3 with progress tracking
             const xhr = new XMLHttpRequest();
+            xhrRef.current = xhr;
 
             await new Promise<void>((resolve, reject) => {
                 xhr.upload.addEventListener('progress', (progressEvent) => {
@@ -121,6 +132,7 @@ const FileUpload: FC<FileUploadProps> = ({
             setError(errorMessage);
             setProgress(null);
         } finally {
+            xhrRef.current = null;
             setIsUploading(false);
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';

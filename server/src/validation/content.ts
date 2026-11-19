@@ -14,12 +14,28 @@ export function requireNonEmptyString(value: unknown, field: string): string {
   return value;
 }
 
+function slugify(value: string): string {
+  const slug = value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  if (!slug) {
+    throw new ValidationError('slug must contain at least one alphanumeric character');
+  }
+  return slug;
+}
+
 export function deriveSlug(input: Record<string, unknown>): string {
   if (typeof input.slug === 'string' && input.slug.trim() !== '') {
-    return input.slug;
+    // Normalize a client-supplied slug the same way as the title-derived
+    // fallback below -- otherwise "My Slug" and "my-slug" coexist as distinct
+    // records, and an unnormalized slug (e.g. containing "/") breaks Astro's
+    // dynamic routes.
+    return slugify(input.slug);
   }
   const title = requireNonEmptyString(input.title, 'title');
-  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  return slugify(title);
 }
 
 // Fields not in `updatableFields` are silently dropped, closing the mass-
@@ -43,12 +59,15 @@ export function validateReorderInput(raw: unknown): { id: string; order: number 
     throw new ValidationError('items must be an array');
   }
   return input.items.map((item, index) => {
-    if (
-      typeof item !== 'object' ||
-      item === null ||
-      typeof (item as Record<string, unknown>).id !== 'string' ||
-      typeof (item as Record<string, unknown>).order !== 'number'
-    ) {
+    const candidate = item as Record<string, unknown> | null;
+    const isValid =
+      typeof candidate === 'object' &&
+      candidate !== null &&
+      typeof candidate.id === 'string' &&
+      typeof candidate.order === 'number' &&
+      Number.isFinite(candidate.order);
+
+    if (!isValid) {
       throw new ValidationError(`items[${index}] must have a string id and numeric order`);
     }
     const entry = item as { id: string; order: number };

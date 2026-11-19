@@ -8,7 +8,9 @@ import {
   UpdateCommand,
   DeleteCommand,
 } from '@aws-sdk/lib-dynamodb';
+import { ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb';
 import { ContentRepository, type ContentRecord } from '../content.repository';
+import { NotFoundError } from '../../lib/errors';
 
 interface TestItem extends ContentRecord {
   title: string;
@@ -72,6 +74,15 @@ describe('ContentRepository', () => {
     expect(call.UpdateExpression).toBe('SET #order = :order');
     expect(call.ExpressionAttributeNames).toEqual({ '#order': 'order' });
     expect(call.ExpressionAttributeValues).toEqual({ ':order': 5 });
+    expect(call.ConditionExpression).toBe('attribute_exists(id)');
+  });
+
+  it('updateFields throws NotFoundError instead of upserting when the id does not exist', async () => {
+    ddbMock.on(UpdateCommand).rejects(
+      new ConditionalCheckFailedException({ message: 'The conditional request failed', $metadata: {} })
+    );
+
+    await expect(repository.updateFields('missing', { order: 5 })).rejects.toThrow(NotFoundError);
   });
 
   it('deleteById sends the id as the key', async () => {

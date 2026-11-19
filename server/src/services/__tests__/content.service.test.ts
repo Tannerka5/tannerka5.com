@@ -27,7 +27,10 @@ class FakeContentRepository {
 
   async updateFields(id: string, fields: Record<string, unknown>): Promise<void> {
     const item = this.items.find((entry) => entry.id === id);
-    if (item) Object.assign(item, fields);
+    // Mirrors the real repository's attribute_exists(id) condition: fail
+    // instead of upserting a fields-only row for a deleted/unknown id.
+    if (!item) throw new NotFoundError('Item not found');
+    Object.assign(item, fields);
   }
 
   async deleteById(id: string): Promise<void> {
@@ -134,6 +137,12 @@ describe('ContentService', () => {
 
       const items = await service.list();
       expect(items.map((item) => item.title)).toEqual(['Second', 'First']);
+    });
+
+    it('throws NotFoundError instead of silently upserting a deleted item', async () => {
+      await expect(service.reorder([{ id: 'never-existed', order: 0 }])).rejects.toThrow(
+        NotFoundError
+      );
     });
   });
 });

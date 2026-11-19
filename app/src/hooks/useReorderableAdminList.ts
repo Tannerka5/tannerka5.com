@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
     KeyboardSensor,
     PointerSensor,
@@ -33,6 +33,18 @@ export function useReorderableAdminList<T extends ReorderableItem>({
 }: UseReorderableAdminListOptions<T>) {
     const [items, setItems] = useState<T[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    // Kept in sync with `items` but updated synchronously (unlike state) so
+    // a second drag started before the first's setItems/re-render has
+    // committed still computes from the first drag's result instead of the
+    // stale pre-drag order.
+    const itemsRef = useRef<T[]>(items);
+    // Chains reorder() calls so their network responses can't land out of
+    // order and overwrite a more recent drag's result with a stale one.
+    const pendingReorderRef = useRef<Promise<unknown>>(Promise.resolve());
+
+    useEffect(() => {
+        itemsRef.current = items;
+    }, [items]);
 
     const reload = useCallback(async () => {
         try {
@@ -68,16 +80,27 @@ export function useReorderableAdminList<T extends ReorderableItem>({
         const { active, over } = event;
         if (!over || active.id === over.id) return;
 
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        const newItems = arrayMove(items, oldIndex, newIndex).map((item, index) => ({
+        const currentItems = itemsRef.current;
+        const oldIndex = currentItems.findIndex((item) => item.id === active.id);
+        const newIndex = currentItems.findIndex((item) => item.id === over.id);
+        const newItems = arrayMove(currentItems, oldIndex, newIndex).map((item, index) => ({
             ...item,
             order: index,
         }));
 
+        // Apply optimistically and update the ref synchronously, before the
+        // network call, so an overlapping second drag reads this result
+        // instead of the pre-drag order.
+        itemsRef.current = newItems;
+        setItems(newItems);
+
+        const reorderCall = pendingReorderRef.current.then(() =>
+            reorder(newItems.map((item, index) => ({ id: item.id, order: index })))
+        );
+        pendingReorderRef.current = reorderCall.catch(() => undefined);
+
         try {
-            await reorder(newItems.map((item, index) => ({ id: item.id, order: index })));
-            setItems(newItems);
+            await reorderCall;
         } catch {
             alert(reorderErrorMessage);
             reload();

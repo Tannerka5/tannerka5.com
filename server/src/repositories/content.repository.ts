@@ -6,6 +6,8 @@ import {
   DeleteCommand,
   QueryCommand,
 } from '@aws-sdk/lib-dynamodb';
+import { ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb';
+import { NotFoundError } from '../lib/errors';
 
 export interface ContentRecord {
   id: string;
@@ -57,15 +59,26 @@ export class ContentRepository<T extends ContentRecord> {
       expressionAttributeValues[`:${key}`] = value;
     });
 
-    await this.docClient.send(
-      new UpdateCommand({
-        TableName: this.tableName,
-        Key: { id },
-        UpdateExpression: `SET ${updateExpressions.join(', ')}`,
-        ExpressionAttributeNames: expressionAttributeNames,
-        ExpressionAttributeValues: expressionAttributeValues,
-      })
-    );
+    try {
+      await this.docClient.send(
+        new UpdateCommand({
+          TableName: this.tableName,
+          Key: { id },
+          UpdateExpression: `SET ${updateExpressions.join(', ')}`,
+          // Without this, UpdateCommand upserts on a missing id -- a reorder
+          // referencing an already-deleted item would silently create a
+          // corrupt row with only {id, ...fields} instead of failing.
+          ConditionExpression: 'attribute_exists(id)',
+          ExpressionAttributeNames: expressionAttributeNames,
+          ExpressionAttributeValues: expressionAttributeValues,
+        })
+      );
+    } catch (error) {
+      if (error instanceof ConditionalCheckFailedException) {
+        throw new NotFoundError('Item not found');
+      }
+      throw error;
+    }
   }
 
   async deleteById(id: string): Promise<void> {

@@ -29,6 +29,11 @@ describe('sanitizeHtml', () => {
         expect(sanitizeHtml(safe)).toBe(safe);
     });
 
+    it('allows <b>/<i>/<div> through unchanged (what execCommand and contentEditable actually emit)', () => {
+        const safe = '<div><b>bold</b> <i>italic</i></div>';
+        expect(sanitizeHtml(safe)).toBe(safe);
+    });
+
     it('allows images with src/alt but strips disallowed attributes', () => {
         expect(sanitizeHtml('<img src="/a.png" alt="A" data-evil="x">')).toBe(
             '<img src="/a.png" alt="A">'

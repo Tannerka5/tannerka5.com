@@ -19,7 +19,7 @@ interface Props {
 
 const {
     title,
-    description = 'Full-stack developer and Computer Science student specializing in cloud-based web applications.',
+    description = 'Full-stack developer and Information Systems student specializing in cloud-based web applications.',
     ogImage,
     ogType = 'website',
     article,
@@ -47,34 +47,9 @@ const currentPath = Astro.url.pathname;
         <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png" />
 
-        <!-- Preconnect to external domains -->
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
         <!-- DNS prefetch for external resources -->
         <link rel="dns-prefetch" href="https://github.com" />
         <link rel="dns-prefetch" href="https://linkedin.com" />
-
-        <!-- Optimized font loading -->
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap"
-            rel="stylesheet"
-            media="print"
-        />
-        <script is:inline>
-            (function () {
-                const link = document.querySelector('link[href*="fonts.googleapis.com"]');
-                if (link) {
-                    link.media = 'all';
-                }
-            })();
-        </script>
-        <noscript>
-            <link
-                href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap"
-                rel="stylesheet"
-            />
-        </noscript>
 
         <!-- Theme Script (minified) -->
         <script is:inline>
@@ -84,8 +59,107 @@ const currentPath = Astro.url.pathname;
             document.documentElement.classList.toggle('dark', t === 'dark');
         </script>
 
-        <!-- Performance hint styles -->
+        <!-- Self-hosted Inter/Poppins (latin + latin-ext subsets, matching
+             this site's lang="en" content). Previously loaded from Google's
+             font CDN, which sends every visitor's IP to Google on each
+             request without consent -- the basis of GDPR enforcement action
+             in the EU. Self-hosting removes that third-party request
+             entirely; no preconnect/async-swap dance is needed since these
+             are served from this origin.
+             Inter ships as a single variable-font file per subset covering
+             the whole 300-700 weight range; Poppins ships one static file
+             per weight. -->
         <style is:inline>
+            @font-face {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 300 700;
+                font-display: swap;
+                src: url('/fonts/inter-latin-ext.woff2') format('woff2');
+                unicode-range:
+                    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+                    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+                    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            }
+            @font-face {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 300 700;
+                font-display: swap;
+                src: url('/fonts/inter-latin.woff2') format('woff2');
+                unicode-range:
+                    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+                    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+                    U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'Poppins';
+                font-style: normal;
+                font-weight: 600;
+                font-display: swap;
+                src: url('/fonts/poppins-latin-ext-600.woff2') format('woff2');
+                unicode-range:
+                    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+                    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+                    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            }
+            @font-face {
+                font-family: 'Poppins';
+                font-style: normal;
+                font-weight: 600;
+                font-display: swap;
+                src: url('/fonts/poppins-latin-600.woff2') format('woff2');
+                unicode-range:
+                    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+                    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+                    U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'Poppins';
+                font-style: normal;
+                font-weight: 700;
+                font-display: swap;
+                src: url('/fonts/poppins-latin-ext-700.woff2') format('woff2');
+                unicode-range:
+                    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+                    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+                    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            }
+            @font-face {
+                font-family: 'Poppins';
+                font-style: normal;
+                font-weight: 700;
+                font-display: swap;
+                src: url('/fonts/poppins-latin-700.woff2') format('woff2');
+                unicode-range:
+                    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+                    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+                    U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'Poppins';
+                font-style: normal;
+                font-weight: 800;
+                font-display: swap;
+                src: url('/fonts/poppins-latin-ext-800.woff2') format('woff2');
+                unicode-range:
+                    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+                    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+                    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            }
+            @font-face {
+                font-family: 'Poppins';
+                font-style: normal;
+                font-weight: 800;
+                font-display: swap;
+                src: url('/fonts/poppins-latin-800.woff2') format('woff2');
+                unicode-range:
+                    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+                    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+                    U+FEFF, U+FFFD;
+            }
+
+            /* Performance hint styles */
             .will-change-transform {
                 will-change: transform;
             }
@@ -108,7 +182,13 @@ const currentPath = Astro.url.pathname;
                     <p class="text-sm text-white/80">
                         &copy; 2025 Tanner Atkinson. Built with Astro + React on AWS.
                     </p>
-                    <div class="flex space-x-6 mt-4 md:mt-0">
+                    <div class="flex items-center space-x-6 mt-4 md:mt-0">
+                        <a
+                            href="/privacy"
+                            class="text-sm text-white/80 hover:text-accent transition-colors"
+                        >
+                            Privacy Policy
+                        </a>
                         <a
                             href="https://github.com/tannerka5"
                             target="_blank"

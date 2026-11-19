@@ -12,7 +12,6 @@ export async function routeRequest(event: APIGatewayProxyEvent): Promise<APIGate
   const method = event.httpMethod;
   // Try multiple path sources - API Gateway can provide path in different places
   const path = event.path || event.requestContext?.path || event.resource || '';
-  const resource = event.resource || '';
 
   try {
     if (method === 'OPTIONS') {
@@ -26,14 +25,12 @@ export async function routeRequest(event: APIGatewayProxyEvent): Promise<APIGate
       return createResponse(200, result, event);
     }
 
-    // Upload endpoint - check for /upload in path (handles stage prefixes like /prod/upload)
-    // Also check if using proxy route - in that case, check the last path segment
+    // Upload endpoint - match the final path segment exactly (not a substring
+    // check) so e.g. /projects/upload-history doesn't get misrouted here.
+    // pathParts is derived from `path` above, so this already handles stage
+    // prefixes (/prod/upload) and proxy routes ({proxy+}) the same way.
     const isUploadRoute =
-      method === 'POST' &&
-      (path.includes(`/${ROUTE_SEGMENTS.upload}`) ||
-        path.endsWith(`/${ROUTE_SEGMENTS.upload}`) ||
-        (resource === '/{proxy+}' && pathParts[pathParts.length - 1] === ROUTE_SEGMENTS.upload) ||
-        resource === `/${ROUTE_SEGMENTS.upload}`);
+      method === 'POST' && pathParts[pathParts.length - 1] === ROUTE_SEGMENTS.upload;
 
     if (isUploadRoute) {
       const auth = verifyToken(event);

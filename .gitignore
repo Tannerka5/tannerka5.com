@@ -7,8 +7,6 @@ Thumbs.db
 .idea/
 
 # Backend
-server/node_modules/
-server/dist/
 server/lambda.zip
 server/*.log
 
@@ -21,7 +19,12 @@ server/*.log
 # Node modules
 node_modules/
 
+# Build output and framework caches (any package: app/, server/, etc.)
+dist/
+.astro/
+
 # Temporary files
 generate-hash.js
 /*.md
 !/README.md
+md/

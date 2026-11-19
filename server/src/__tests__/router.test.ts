@@ -5,6 +5,7 @@ import {
   QueryCommand,
   UpdateCommand,
   ScanCommand,
+  PutCommand,
 } from '@aws-sdk/lib-dynamodb';
 import * as jwt from 'jsonwebtoken';
 import type { APIGatewayProxyEvent } from 'aws-lambda';
@@ -81,6 +82,30 @@ describe('routeRequest', () => {
 
     expect(response.statusCode).toBe(200);
     expect(ddbMock.commandCalls(QueryCommand)).toHaveLength(0);
+  });
+
+  // Regression test: isUploadRoute used to be a substring check
+  // (path.includes('/upload')), so a path like /projects/upload-history
+  // matched and got misrouted into the S3 presigned-upload handler instead
+  // of reaching the normal create-project path.
+  it('does not misroute a path that merely contains "upload" into the upload handler', async () => {
+    ddbMock.on(QueryCommand).resolves({ Items: [] });
+    ddbMock.on(PutCommand).resolves({});
+
+    const response = await routeRequest(
+      baseEvent({
+        httpMethod: 'POST',
+        path: '/projects/upload-history',
+        resource: '/{proxy+}',
+        headers: authHeaders,
+        body: JSON.stringify({ title: 'Not an upload' }),
+      })
+    );
+
+    expect(response.statusCode).toBe(201);
+    // findBySlug (QueryCommand) running confirms this hit create(), not the
+    // S3 upload path.
+    expect(ddbMock.commandCalls(QueryCommand)).toHaveLength(1);
   });
 
   it('rejects writes without a valid token', async () => {
