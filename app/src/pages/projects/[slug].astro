@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectDetailPage from '../../components/projects/ProjectDetailPage';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ProjectSchema from '../../components/ProjectSchema.astro';
+import { getProjectsPublic } from '../../lib/api-server';
+
+export async function getStaticPaths() {
+    try {
+        const response = await getProjectsPublic();
+        const projects = response.projects || [];
+
+        return projects.map((project) => ({
+            params: { slug: project.slug },
+            props: { project, allProjects: projects },
+        }));
+    } catch (error) {
+        console.error('Failed to fetch projects for static paths:', error);
+        return [];
+    }
+}
+
+const { project, allProjects } = Astro.props;
+const allSlugs = (allProjects || []).map((projectItem) => projectItem.slug);
+---
+
+<BaseLayout
+    title={`${project.title} | Projects`}
+    description={project.shortDescription}
+    ogImage={project.logo}
+>
+    <!-- Breadcrumbs -->
+    <div class="bg-cream dark:bg-gray-900 pt-24 pb-4 px-4">
+        <div class="max-w-7xl mx-auto">
+            <Breadcrumbs
+                items={[
+                    { name: 'Projects', path: '/projects' },
+                    { name: project.title, path: `/projects/${project.slug}` },
+                ]}
+            />
+        </div>
+    </div>
+
+    <!-- Structured Data for Project -->
+    <ProjectSchema
+        title={project.title}
+        description={project.shortDescription}
+        image={project.logo}
+        techStack={project.techStack}
+        url={project.links?.live}
+    />
+
+    <ProjectDetailPage
+        client:load
+        initialProject={project}
+        allSlugs={allSlugs}
+    />
+</BaseLayout>

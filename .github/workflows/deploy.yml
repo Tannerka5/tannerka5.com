@@ -1,0 +1,183 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+# Never run two deploys at once (they'd race on the S3 sync / Lambda update),
+# and never cancel one midway through -- let it finish, then run the next.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Verify: runs on every PR and push. Deploy jobs below depend on this.
+  # ---------------------------------------------------------------------------
+  verify-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+        working-directory: app
+      - run: npm run lint
+        working-directory: app
+      - run: npm test
+        working-directory: app
+
+  verify-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+        working-directory: server
+      - run: npm run lint
+        working-directory: server
+      - run: npm run typecheck
+        working-directory: server
+      - run: npm test
+        working-directory: server
+
+  changes:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'app/**'
+            backend:
+              - 'server/**'
+
+  # ---------------------------------------------------------------------------
+  # Deploy (main / manual only -- never on pull_request)
+  # ---------------------------------------------------------------------------
+  deploy-frontend:
+    needs: [verify-app, changes]
+    if: >-
+      github.event_name != 'pull_request' &&
+      (needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Build
+        working-directory: app
+        env:
+          # Actions *variable* (Settings > Secrets and variables > Actions >
+          # Variables): the API Gateway invoke URL, e.g.
+          # https://<id>.execute-api.<api-region>.amazonaws.com/prod
+          # (the API Gateway is in us-east-1; the Lambda and AWS_REGION are us-east-2)
+          # The site is statically generated, so pages are built from API data
+          # at this moment. Without it, project/blog pages build empty.
+          PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
+        run: |
+          if [ -z "$PUBLIC_API_URL" ]; then
+            echo "::error::PUBLIC_API_URL repository variable is not set"
+            exit 1
+          fi
+          npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Sync hashed assets (long cache, immutable)
+        run: |
+          aws s3 sync app/dist/ s3://${{ vars.S3_BUCKET_NAME }} \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "*.html" --exclude "sitemap.xml" --exclude "robots.txt"
+
+      - name: Sync HTML/sitemap/robots (no cache)
+        run: |
+          aws s3 sync app/dist/ s3://${{ vars.S3_BUCKET_NAME }} \
+            --delete \
+            --cache-control "public, max-age=0, must-revalidate" \
+            --exclude "*" --include "*.html" --include "sitemap.xml" --include "robots.txt"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+  deploy-backend:
+    needs: [verify-server, changes]
+    if: >-
+      github.event_name != 'pull_request' &&
+      (needs.changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Build and package
+        working-directory: server
+        run: npm run package
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Deploy to Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name ${{ vars.LAMBDA_FUNCTION_NAME }} \
+            --zip-file fileb://server/lambda.zip
+
+      - name: Wait for update to finish propagating
+        run: |
+          aws lambda wait function-updated \
+            --function-name ${{ vars.LAMBDA_FUNCTION_NAME }}
