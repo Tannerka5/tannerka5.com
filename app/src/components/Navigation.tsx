@@ -367,8 +367,8 @@ const Navigation: FC<NavProps> = ({ currentPath = '/' }) => {
                         transition={{ duration: 0.3, delay: 0.5 }}
                         className="pb-8 text-center text-earth/70 dark:text-gray-400"
                     >
-                        Full-Stack Developer building scalable web applications with cloud
-                        infrastructure, database design, and modern frameworks.
+                        Full-Stack Developer specializing in TypeScript, building scalable web
+                        applications with cloud infrastructure and database design.
                     </motion.p>
                 </div>
             </motion.div>

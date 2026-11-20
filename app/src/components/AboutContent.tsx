@@ -1,7 +1,127 @@
 import { motion } from 'framer-motion';
 import type { FC } from 'react';
 import AnimatedDivider from './AnimatedDivider';
-import StaggeredList from './StaggeredList';
+
+interface TimelineEntry {
+    kind: 'Work' | 'Education' | 'Service';
+    date: string;
+    title: string;
+    org: string;
+    location: string;
+    points: string[];
+}
+
+// Ordered by most recent end date.
+const TIMELINE: TimelineEntry[] = [
+    {
+        kind: 'Education',
+        date: 'Anticipated Dec 2026',
+        title: 'B.S. in Information Systems',
+        org: 'Brigham Young University, Marriott School of Business',
+        location: 'Provo, UT',
+        points: ['Minor in Environmental Science'],
+    },
+    {
+        kind: 'Work',
+        date: 'May 2026 - Jul 2026',
+        title: 'Software Developer Intern',
+        org: 'Trove Brands',
+        location: 'Lehi, UT',
+        points: [
+            '11.2K-line full-stack Shopify app in TypeScript with a modular service/repository architecture',
+            'Kubernetes and CI/CD deployment infrastructure; automated tests expanded to 330',
+            'Root-cause fixes for production issues and peer code reviews',
+        ],
+    },
+    {
+        kind: 'Work',
+        date: 'Mar 2019 - May 2026',
+        title: 'IT Manager & Team Leader',
+        org: 'Chick-fil-A',
+        location: 'Dover, DE and Provo, UT',
+        points: [
+            'Supported 40+ POS, KPS, and iPOS systems with high uptime',
+            'Directed 60 staff and analyzed 20+ sales metrics, driving a 26.4% store sales increase in 6 months',
+        ],
+    },
+    {
+        kind: 'Service',
+        date: 'Sep 2023 - Aug 2025',
+        title: 'Volunteer Representative',
+        org: 'Community service',
+        location: 'S\u00e3o Paulo, Brazil',
+        points: [
+            'Led community service projects and trained and supervised 70+ volunteers',
+            'Taught Beginner and Advanced English courses',
+        ],
+    },
+];
+
+const STACK = [
+    {
+        name: 'Interface',
+        caption: 'What people see and touch',
+        tint: 'bg-accent/5 dark:bg-white/[0.03]',
+        skills: ['React', 'Astro', 'Tailwind CSS', 'HTML/CSS', 'Razor Pages'],
+    },
+    {
+        name: 'Application',
+        caption: 'Where the logic lives',
+        tint: 'bg-accent/10 dark:bg-white/[0.06]',
+        skills: [
+            'TypeScript',
+            'Node.js',
+            'C#',
+            'ASP.NET MVC Core',
+            'REST APIs',
+            'GraphQL',
+        ],
+    },
+    {
+        name: 'Data',
+        caption: 'Stored, modeled, analyzed',
+        tint: 'bg-accent/15 dark:bg-white/[0.09]',
+        skills: [
+            'MySQL',
+            'PostgreSQL',
+            'Python',
+            'Feature Engineering',
+            'Classification & Clustering Models',
+            'Tableau',
+            'Power BI',
+        ],
+    },
+    {
+        name: 'Cloud & Delivery',
+        caption: 'Where it runs and ships',
+        tint: 'bg-accent/20 dark:bg-white/[0.12]',
+        skills: [
+            'AWS: EC2, S3, RDS, Lambda, CloudFront, ACM',
+            'Docker',
+            'Kubernetes',
+            'CI/CD',
+            'Git',
+        ],
+    },
+];
+
+const RAIL = [
+    {
+        name: 'Security',
+        skills: ['Authentication & authorization', 'HTTPS', 'bcrypt', 'Secure system design'],
+    },
+    {
+        name: 'Practice',
+        skills: [
+            'Clean code',
+            'Architecture & system design',
+            'Agile/Scrum',
+            'Requirements gathering',
+            'Stakeholder communication',
+            'SDLC',
+        ],
+    },
+];
 
 const AboutContent: FC = () => {
     return (
@@ -30,8 +150,9 @@ const AboutContent: FC = () => {
                                 transition={{ duration: 0.6, delay: 0.1 }}
                             >
                                 I&apos;m an Information Systems student at Brigham Young University
-                                with a passion for building scalable web applications and solving
-                                complex technical challenges.
+                                (Marriott School of Business), graduating in December 2026. I build
+                                full-stack applications in TypeScript with Node.js, React, SQL, and
+                                AWS.
                             </motion.p>
                             <motion.p
                                 className="text-lg text-earth dark:text-gray-100/70 leading-relaxed mb-6"
@@ -39,9 +160,10 @@ const AboutContent: FC = () => {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: 0.2 }}
                             >
-                                My journey in software development combines hands-on project
-                                experience, cloud infrastructure expertise, and a commitment to
-                                writing clean, maintainable code that makes a real impact.
+                                Most recently I was a Software Developer Intern at Trove Brands,
+                                where I shipped a TypeScript Shopify application and grew automated
+                                test coverage to 330 tests. Before that, I spent seven years at
+                                Chick-fil-A managing IT systems and leading teams.
                             </motion.p>
                             <motion.div
                                 className="flex gap-4"
@@ -95,258 +217,173 @@ const AboutContent: FC = () => {
 
             <AnimatedDivider color="#6B9080" />
 
-            {/* Experience Timeline */}
-            <section className="py-20 px-4 bg-white dark:bg-gray-800">
-                <div className="max-w-5xl mx-auto">
+            {/* Experience, Education & Service Timeline */}
+            <section className="py-16 px-4 bg-white dark:bg-gray-800">
+                <div className="max-w-4xl mx-auto">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-12 text-center"
+                        className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-10 text-center"
                     >
                         Experience & Education
                     </motion.h2>
 
-                    <div className="space-y-8">
-                        {[
-                            {
-                                title: 'Computer Science Student',
-                                organization: 'Brigham Young University',
-                                period: '2022 - Present',
-                                location: 'Provo, Utah',
-                                description:
-                                    "Pursuing a Bachelor's degree in Computer Science with coursework in database management, web development, data analysis, and software engineering. Maintaining a strong GPA while building real-world projects.",
-                                highlights: [
-                                    'Database Management & SQL',
-                                    'Web Application Development',
-                                    'Data Analysis & Visualization',
-                                    'Software Engineering Principles',
-                                ],
-                                type: 'education',
-                            },
-                            {
-                                title: 'Full-Stack Developer',
-                                organization: 'Personal Projects & Freelance',
-                                period: '2023 - Present',
-                                location: 'Remote',
-                                description:
-                                    'Developed multiple full-stack web applications for nonprofits and community organizations, focusing on cloud deployment, database design, and user-centered design.',
-                                highlights: [
-                                    'Built 3+ production applications on AWS',
-                                    'Managed databases with 1000+ records',
-                                    'Implemented secure authentication systems',
-                                    'Deployed scalable cloud infrastructure',
-                                ],
-                                type: 'experience',
-                            },
-                            {
-                                title: 'Previous Experience',
-                                organization: 'Various Roles',
-                                period: '2020 - 2022',
-                                location: 'Dover, Delaware',
-                                description:
-                                    'Developed strong problem-solving, communication, and project management skills through various professional experiences before transitioning to software development.',
-                                highlights: [
-                                    'Customer service excellence',
-                                    'Team collaboration',
-                                    'Project coordination',
-                                    'Adaptability and quick learning',
-                                ],
-                                type: 'experience',
-                            },
-                        ].map((item, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, x: -50 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.15, duration: 0.6 }}
-                                className="relative pl-8 border-l-4 border-accent"
+                    <ol>
+                        {TIMELINE.map((entry, index) => (
+                            <motion.li
+                                key={entry.title}
+                                initial={{ opacity: 0, y: 24 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: '-40px' }}
+                                transition={{ duration: 0.5 }}
+                                className="grid grid-cols-[1.5rem_1fr] md:grid-cols-[13rem_1.5rem_1fr] gap-x-4 md:gap-x-6"
                             >
-                                <motion.div
-                                    className="absolute -left-3 top-0 w-6 h-6 bg-accent rounded-full border-4 border-white"
-                                    initial={{ scale: 0 }}
-                                    whileInView={{ scale: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{
-                                        delay: index * 0.15 + 0.3,
-                                        type: 'spring',
-                                        stiffness: 200,
-                                    }}
-                                />
-                                <div className="bg-cream dark:bg-gray-900 p-6 rounded-xl">
-                                    <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
-                                        <div>
-                                            <h3 className="text-2xl font-bold text-earth dark:text-gray-100">
-                                                {item.title}
-                                            </h3>
-                                            <p className="text-lg text-accent font-semibold">
-                                                {item.organization}
-                                            </p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-earth dark:text-gray-100/70 font-medium">
-                                                {item.period}
-                                            </p>
-                                            <p className="text-earth dark:text-gray-100/50 text-sm">
-                                                {item.location}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <p className="text-earth dark:text-gray-100/70 mb-4">
-                                        {item.description}
+                                <div className="hidden md:block text-right pt-0.5">
+                                    <p className="text-earth dark:text-gray-100/70 font-medium whitespace-nowrap">
+                                        {entry.date}
                                     </p>
-                                    <StaggeredList className="space-y-2" staggerDelay={0.08}>
-                                        {item.highlights.map((highlight, index) => (
-                                            <li
-                                                key={index}
-                                                className="flex items-start gap-2 text-earth dark:text-gray-100/70"
-                                            >
-                                                <svg
-                                                    className="w-5 h-5 text-accent flex-shrink-0 mt-0.5"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 20 20"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                                {highlight}
-                                            </li>
-                                        ))}
-                                    </StaggeredList>
+                                    <p className="text-xs font-semibold tracking-widest uppercase text-accent">
+                                        {entry.kind}
+                                    </p>
                                 </div>
-                            </motion.div>
+
+                                <div className="relative flex justify-center" aria-hidden="true">
+                                    {index < TIMELINE.length - 1 && (
+                                        <span className="absolute top-4 bottom-0 w-px bg-accent/30" />
+                                    )}
+                                    <span
+                                        className={`relative mt-1.5 w-3.5 h-3.5 rounded-full ring-4 ring-white dark:ring-gray-800 ${
+                                            entry.kind === 'Education'
+                                                ? 'bg-white dark:bg-gray-800 border-2 border-accent'
+                                                : 'bg-accent'
+                                        }`}
+                                    />
+                                </div>
+
+                                <div className="pb-8">
+                                    <p className="md:hidden text-sm text-earth dark:text-gray-100/70 font-medium">
+                                        {entry.date}
+                                        <span className="text-accent"> / {entry.kind}</span>
+                                    </p>
+                                    <h3 className="text-xl font-bold text-earth dark:text-gray-100">
+                                        {entry.title}
+                                    </h3>
+                                    <p className="text-sm text-earth dark:text-gray-100/70 mb-2">
+                                        {entry.org}
+                                        <span className="text-earth/40 dark:text-gray-100/40">
+                                            {' '}
+                                            / {entry.location}
+                                        </span>
+                                    </p>
+                                    {entry.points.length > 0 && (
+                                        <ul className="space-y-1 text-earth dark:text-gray-100/70">
+                                            {entry.points.map((point) => (
+                                                <li key={point} className="flex gap-3">
+                                                    <span
+                                                        className="mt-2.5 w-3 h-px bg-accent flex-shrink-0"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span>{point}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            </motion.li>
                         ))}
-                    </div>
+                    </ol>
                 </div>
             </section>
 
             <AnimatedDivider color="#2E5266" />
 
-            {/* Skills Deep Dive */}
+            {/* Skills: stack diagram */}
             <section className="py-20 px-4 bg-cream dark:bg-gray-900">
                 <div className="max-w-6xl mx-auto">
-                    <motion.h2
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-12 text-center"
+                        className="text-center mb-12"
                     >
-                        Technical Skills
-                    </motion.h2>
+                        <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-3">
+                            Technical Skills
+                        </h2>
+                        <p className="text-earth dark:text-gray-100/70">
+                            Organized by where they sit in a running application, from what people
+                            see to where it runs.
+                        </p>
+                    </motion.div>
 
-                    <div className="grid md:grid-cols-2 gap-8">
-                        {[
-                            {
-                                category: 'Frontend Development',
-                                icon: '🎨',
-                                skills: [
-                                    { name: 'React & Hooks', level: 85 },
-                                    { name: 'Astro', level: 80 },
-                                    { name: 'Tailwind CSS', level: 90 },
-                                    { name: 'JavaScript/TypeScript', level: 85 },
-                                    { name: 'HTML/CSS', level: 95 },
-                                ],
-                            },
-                            {
-                                category: 'Backend Development',
-                                icon: '⚡',
-                                skills: [
-                                    { name: 'Node.js', level: 85 },
-                                    { name: 'Express.js', level: 85 },
-                                    { name: 'RESTful APIs', level: 80 },
-                                    { name: 'Authentication (bcrypt, sessions)', level: 80 },
-                                    { name: 'Server-side rendering', level: 75 },
-                                ],
-                            },
-                            {
-                                category: 'Database & Data',
-                                icon: '🗄️',
-                                skills: [
-                                    { name: 'PostgreSQL', level: 85 },
-                                    { name: 'MySQL', level: 85 },
-                                    { name: 'Database Design & Normalization', level: 90 },
-                                    { name: 'SQL Query Optimization', level: 80 },
-                                    { name: 'Data Analysis (Python/pandas)', level: 75 },
-                                ],
-                            },
-                            {
-                                category: 'Cloud & DevOps',
-                                icon: '☁️',
-                                skills: [
-                                    { name: 'AWS (S3, EC2, RDS, EB, CloudFront)', level: 80 },
-                                    { name: 'Linux/Unix Command Line', level: 85 },
-                                    { name: 'Git & GitHub', level: 90 },
-                                    { name: 'CI/CD Basics', level: 70 },
-                                    { name: 'HTTPS & SSL/TLS', level: 75 },
-                                ],
-                            },
-                        ].map((category, index) => (
-                            <motion.div
-                                key={category.category}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1, duration: 0.6 }}
-                                className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md dark:shadow-gray-900"
-                            >
-                                <div className="flex items-center gap-3 mb-6">
-                                    <motion.span
-                                        className="text-4xl"
-                                        initial={{ scale: 0, rotate: -180 }}
-                                        whileInView={{ scale: 1, rotate: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{
-                                            delay: index * 0.1 + 0.2,
-                                            type: 'spring',
-                                            stiffness: 200,
-                                        }}
-                                    >
-                                        {category.icon}
-                                    </motion.span>
-                                    <h3 className="text-2xl font-bold text-earth dark:text-gray-100">
-                                        {category.category}
+                    <div className="grid lg:grid-cols-[1fr_18rem] gap-10">
+                        <div className="rounded-2xl overflow-hidden border border-accent/20">
+                            {STACK.map((layer, index) => (
+                                <motion.div
+                                    key={layer.name}
+                                    initial={{ opacity: 0, x: -24 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true, margin: '-30px' }}
+                                    transition={{ duration: 0.5, delay: index * 0.08 }}
+                                    className={`grid md:grid-cols-[11rem_1fr] gap-x-8 gap-y-2 px-6 py-6 ${layer.tint} ${
+                                        index > 0 ? 'border-t border-accent/20' : ''
+                                    }`}
+                                >
+                                    <div>
+                                        <p className="text-xs font-semibold tracking-widest uppercase text-accent">
+                                            Layer {index + 1}
+                                        </p>
+                                        <h3 className="text-xl font-bold text-earth dark:text-gray-100">
+                                            {layer.name}
+                                        </h3>
+                                        <p className="text-sm text-earth/60 dark:text-gray-100/50">
+                                            {layer.caption}
+                                        </p>
+                                    </div>
+                                    <ul className="flex flex-wrap content-center gap-x-6 gap-y-1.5 text-lg font-medium text-earth dark:text-gray-100/90">
+                                        {layer.skills.map((skill) =>
+                                            skill === 'TypeScript' ? (
+                                                <li
+                                                    key={skill}
+                                                    className="text-accent font-bold underline decoration-2 underline-offset-4"
+                                                >
+                                                    TypeScript
+                                                    <span className="ml-2 text-xs font-semibold tracking-widest uppercase align-middle no-underline inline-block">
+                                                        Primary
+                                                    </span>
+                                                </li>
+                                            ) : (
+                                                <li key={skill}>{skill}</li>
+                                            ),
+                                        )}
+                                    </ul>
+                                </motion.div>
+                            ))}
+                        </div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.2 }}
+                            className="lg:border-l-2 lg:border-dashed lg:border-accent/40 lg:pl-8 space-y-8"
+                        >
+                            <p className="text-xs font-semibold tracking-widest uppercase text-accent">
+                                Across every layer
+                            </p>
+                            {RAIL.map((group) => (
+                                <div key={group.name}>
+                                    <h3 className="text-lg font-bold text-earth dark:text-gray-100 mb-2">
+                                        {group.name}
                                     </h3>
+                                    <ul className="space-y-1 text-earth dark:text-gray-100/70">
+                                        {group.skills.map((skill) => (
+                                            <li key={skill}>{skill}</li>
+                                        ))}
+                                    </ul>
                                 </div>
-                                <div className="space-y-4">
-                                    {category.skills.map((skill, skillIndex) => (
-                                        <motion.div
-                                            key={skill.name}
-                                            initial={{ opacity: 0, x: -20 }}
-                                            whileInView={{ opacity: 1, x: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{ delay: index * 0.1 + skillIndex * 0.05 }}
-                                        >
-                                            <div className="flex justify-between mb-1">
-                                                <span className="text-earth dark:text-gray-100/80 font-medium">
-                                                    {skill.name}
-                                                </span>
-                                                <span className="text-accent font-semibold">
-                                                    {skill.level}%
-                                                </span>
-                                            </div>
-                                            <div className="w-full bg-cream dark:bg-gray-900 rounded-full h-2 overflow-hidden">
-                                                <motion.div
-                                                    initial={{ width: 0 }}
-                                                    whileInView={{ width: `${skill.level}%` }}
-                                                    viewport={{ once: true }}
-                                                    transition={{
-                                                        duration: 1.2,
-                                                        delay:
-                                                            index * 0.1 + skillIndex * 0.05 + 0.2,
-                                                        ease: 'easeOut',
-                                                    }}
-                                                    className="bg-gradient-to-r from-accent to-primary h-2 rounded-full"
-                                                />
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </motion.div>
-                        ))}
+                            ))}
+                        </motion.div>
                     </div>
                 </div>
             </section>
@@ -388,9 +425,9 @@ const AboutContent: FC = () => {
                                 ),
                             },
                             {
-                                title: 'Clean, Maintainable Code',
+                                title: 'Clean, Tested Code',
                                 description:
-                                    "I write clear, well-documented code that's easy to understand and maintain, following best practices and design patterns.",
+                                    'I favor modular service/repository architecture, reusable components, and thorough automated tests, so code stays easy to extend and safe to release.',
                                 icon: (
                                     <svg
                                         className="w-8 h-8"
@@ -408,9 +445,9 @@ const AboutContent: FC = () => {
                                 ),
                             },
                             {
-                                title: 'Continuous Learning',
+                                title: 'Technical Ownership',
                                 description:
-                                    "Technology evolves rapidly. I'm committed to staying current with new tools, frameworks, and best practices through hands-on projects and coursework.",
+                                    'I take responsibility for the full lifecycle: building the feature, tracing production issues to their root cause, and working with teammates through code review.',
                                 icon: (
                                     <svg
                                         className="w-8 h-8"
@@ -422,7 +459,7 @@ const AboutContent: FC = () => {
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                             strokeWidth={2}
-                                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                                         />
                                     </svg>
                                 ),
@@ -464,6 +501,70 @@ const AboutContent: FC = () => {
 
             <AnimatedDivider color="#2E5266" />
 
+            {/* Beyond Code */}
+            <section className="py-20 px-4 bg-cream dark:bg-gray-900">
+                <div className="max-w-5xl mx-auto">
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-14 text-center"
+                    >
+                        Beyond Code
+                    </motion.h2>
+
+                    <div className="grid md:grid-cols-[1fr_2fr] md:divide-x divide-accent/30 gap-y-12">
+                        <motion.div
+                            initial={{ opacity: 0, y: 24 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5 }}
+                            className="md:pr-12 text-center"
+                        >
+                            <p className="text-xs font-semibold tracking-widest uppercase text-accent mb-4">
+                                Languages
+                            </p>
+                            <p className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-1">
+                                Portuguese
+                            </p>
+                            <p className="text-earth dark:text-gray-100/70 mb-5">Fluent (C2)</p>
+                            <p className="text-2xl font-display font-bold text-earth dark:text-gray-100 mb-1">
+                                Spanish
+                            </p>
+                            <p className="text-earth dark:text-gray-100/70">
+                                Limited working proficiency
+                            </p>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 24 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                            className="md:pl-12 text-center"
+                        >
+                            <p className="text-xs font-semibold tracking-widest uppercase text-accent mb-4">
+                                Off the clock
+                            </p>
+                            <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-4 text-xl font-display font-bold text-earth dark:text-gray-100">
+                                {[
+                                    'Competitive rock climbing',
+                                    'Hiking',
+                                    'State & national parks',
+                                    'Cooking',
+                                    'Going to the gym',
+                                    'Trading cards',
+                                ].map((interest) => (
+                                    <li key={interest}>{interest}</li>
+                                ))}
+                            </ul>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            <AnimatedDivider color="#6B9080" />
+
             {/* CTA Section */}
             <section className="py-20 px-4 bg-gradient-to-br from-secondary-light via-primary-light to-earth-light dark:from-gray-700 dark:via-gray-900 dark:to-earth text-white transition-colors duration-300">
                 <div className="max-w-4xl mx-auto text-center">
@@ -476,9 +577,9 @@ const AboutContent: FC = () => {
                             Let&apos;s Work Together
                         </h2>
                         <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                            I&apos;m actively seeking internship and full-time opportunities where I
-                            can contribute to meaningful projects and continue growing as a
-                            developer.
+                            I&apos;m graduating in December 2026 and looking for full-time software
+                            engineering roles where I can build reliable, well-tested products
+                            alongside a strong team.
                         </p>
                         <div className="flex flex-wrap gap-4 justify-center">
                             <motion.a

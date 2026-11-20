@@ -9,6 +9,7 @@ const StaggeredList = lazy(() => import('./StaggeredList'));
 
 // Memoized data arrays
 const TECH_STACK = [
+    'TypeScript',
     'Node.js',
     'React',
     'AWS',
@@ -81,7 +82,7 @@ const SKILL_CATEGORIES = [
     },
     {
         title: 'Backend',
-        skills: ['Node.js', 'Express', 'PostgreSQL', 'MySQL', 'REST APIs'],
+        skills: ['TypeScript', 'Node.js', 'Express', 'PostgreSQL', 'MySQL', 'REST APIs'],
     },
     {
         title: 'Cloud & DevOps',
@@ -221,8 +222,8 @@ const HomeContent: FC = () => {
                               })}
                         className="text-xl md:text-2xl text-earth/70 dark:text-gray-300 mb-8 max-w-3xl mx-auto"
                     >
-                        Full-Stack Developer building scalable web applications with cloud
-                        infrastructure, database design, and modern frameworks.
+                        Full-Stack Developer specializing in TypeScript, building scalable web
+                        applications with cloud infrastructure and database design.
                     </motion.p>
 
                     <motion.div
