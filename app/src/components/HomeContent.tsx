@@ -3,9 +3,7 @@ import type { FC } from 'react';
 import { lazy, Suspense, useState, useEffect } from 'react';
 
 // Lazy load heavy components
-const AnimatedCounter = lazy(() => import('./AnimatedCounter'));
 const AnimatedDivider = lazy(() => import('./AnimatedDivider'));
-const StaggeredList = lazy(() => import('./StaggeredList'));
 
 // Memoized data arrays
 const TECH_STACK = [
@@ -63,32 +61,6 @@ const FEATURED_PROJECTS: ProjectItem[] = [
         isCloud: true,
     },
 ];
-
-type StatItem =
-    | { label: string; value: number; suffix: string }
-    | { label: string; value: string; isSpecial: true };
-
-const STATS: StatItem[] = [
-    { label: 'Projects Built', value: 10, suffix: '+' },
-    { label: 'Technologies', value: 15, suffix: '+' },
-    { label: 'GitHub Repos', value: 25, suffix: '+' },
-    { label: 'Monster Consumed', value: '∞', isSpecial: true },
-];
-
-const SKILL_CATEGORIES = [
-    {
-        title: 'Frontend',
-        skills: ['React', 'Astro', 'Tailwind CSS', 'Framer Motion', 'EJS'],
-    },
-    {
-        title: 'Backend',
-        skills: ['TypeScript', 'Node.js', 'Express', 'PostgreSQL', 'MySQL', 'REST APIs'],
-    },
-    {
-        title: 'Cloud & DevOps',
-        skills: ['AWS (S3, EC2, RDS, EB)', 'CloudFront', 'Git/GitHub', 'Linux'],
-    },
-] as const;
 
 const HomeContent: FC = () => {
     const [isMobile, setIsMobile] = useState(false);
@@ -276,30 +248,33 @@ const HomeContent: FC = () => {
                     </motion.div>
                 </div>
 
-                {/* Scroll Indicator */}
-                <motion.div
-                    {...(prefersReducedMotion || !shouldAnimate
-                        ? {}
-                        : {
-                              animate: { y: [0, 10, 0] },
-                              transition: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
-                          })}
-                    className="absolute bottom-8 left-1/2 transform -translate-x-1/2 will-change-transform"
-                >
-                    <svg
-                        className="w-6 h-6 text-earth/50 dark:text-gray-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                {/* Scroll Indicator: the wrapper centers it so framer-motion's transform
+                    (used for the bounce) can't override the horizontal centering. */}
+                <div className="absolute bottom-8 inset-x-0 flex justify-center pointer-events-none">
+                    <motion.div
+                        {...(prefersReducedMotion || !shouldAnimate
+                            ? {}
+                            : {
+                                  animate: { y: [0, 10, 0] },
+                                  transition: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+                              })}
+                        className="will-change-transform"
                     >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                        />
-                    </svg>
-                </motion.div>
+                        <svg
+                            className="w-6 h-6 text-earth/50 dark:text-gray-500"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                            />
+                        </svg>
+                    </motion.div>
+                </div>
             </section>
 
             <Suspense fallback={<div className="h-2" />}>
@@ -307,98 +282,47 @@ const HomeContent: FC = () => {
             </Suspense>
 
             {/* About Preview Section */}
-            <section className="py-20 px-4 bg-white dark:bg-gray-800 transition-colors duration-300">
-                <div className="max-w-6xl mx-auto">
-                    <div className="grid md:grid-cols-2 gap-12 items-center">
-                        <motion.div
-                            {...(prefersReducedMotion || !shouldAnimate
-                                ? {}
-                                : {
-                                      initial: { opacity: 0 },
-                                      whileInView: { opacity: 1 },
-                                      viewport: { once: true, margin: '50px' },
-                                      transition: { duration: 0.6, ease: 'easeOut' },
-                                  })}
+            <section className="py-14 px-4 bg-white dark:bg-gray-800 transition-colors duration-300">
+                <motion.div
+                    {...(prefersReducedMotion || !shouldAnimate
+                        ? {}
+                        : {
+                              initial: { opacity: 0 },
+                              whileInView: { opacity: 1 },
+                              viewport: { once: true, margin: '50px' },
+                              transition: { duration: 0.6, ease: 'easeOut' },
+                          })}
+                    className="max-w-3xl mx-auto text-center"
+                >
+                    <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-4">
+                        Building with Purpose
+                    </h2>
+                    <p className="text-earth/70 dark:text-gray-300 text-lg leading-relaxed mb-6">
+                        Information Systems student at BYU, graduating December 2026. Most recently
+                        a Software Developer Intern at Trove Brands, shipping TypeScript
+                        applications built to last.
+                    </p>
+                    <motion.a
+                        href="/about"
+                        whileHover={{ scale: 1.05 }}
+                        className="inline-flex items-center gap-2 text-accent font-semibold hover:text-accent-dark transition-colors"
+                    >
+                        Learn more about me
+                        <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
                         >
-                            <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-6">
-                                Building with Purpose
-                            </h2>
-                            <p className="text-earth/70 dark:text-gray-300 text-lg leading-relaxed mb-6">
-                                I&apos;m an Information Systems student at BYU specializing in
-                                product management and full-stack development. I love turning
-                                complex problems into elegant, scalable solutions.
-                            </p>
-                            <p className="text-earth/70 dark:text-gray-300 text-lg leading-relaxed mb-8">
-                                From nonprofit management systems to community emergency platforms,
-                                I build applications that make a real impact while pushing my
-                                technical skills forward.
-                            </p>
-                            <motion.a
-                                href="/about"
-                                whileHover={{ scale: 1.05 }}
-                                className="inline-flex items-center gap-2 text-accent font-semibold hover:text-accent-dark transition-colors"
-                            >
-                                Learn more about me
-                                <svg
-                                    className="w-5 h-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M17 8l4 4m0 0l-4 4m4-4H3"
-                                    />
-                                </svg>
-                            </motion.a>
-                        </motion.div>
-
-                        <motion.div
-                            {...(prefersReducedMotion || !shouldAnimate
-                                ? {}
-                                : {
-                                      initial: { opacity: 0 },
-                                      whileInView: { opacity: 1 },
-                                      viewport: { once: true, margin: '50px' },
-                                      transition: { duration: 0.6, ease: 'easeOut' },
-                                  })}
-                            className="grid grid-cols-2 gap-4"
-                        >
-                            {STATS.map((stat) => (
-                                <div
-                                    key={stat.label}
-                                    className="bg-cream dark:bg-gray-900 p-6 rounded-xl text-center border border-sage/20 dark:border-gray-700"
-                                >
-                                    <div className="text-3xl font-display font-bold text-accent mb-2">
-                                        {'isSpecial' in stat ? (
-                                            stat.value
-                                        ) : (
-                                            <Suspense
-                                                fallback={
-                                                    <span>
-                                                        {stat.value}
-                                                        {stat.suffix}
-                                                    </span>
-                                                }
-                                            >
-                                                <AnimatedCounter
-                                                    to={stat.value}
-                                                    suffix={stat.suffix}
-                                                    duration={1.5}
-                                                />
-                                            </Suspense>
-                                        )}
-                                    </div>
-                                    <div className="text-sm text-earth/70 dark:text-gray-400">
-                                        {stat.label}
-                                    </div>
-                                </div>
-                            ))}
-                        </motion.div>
-                    </div>
-                </div>
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M17 8l4 4m0 0l-4 4m4-4H3"
+                            />
+                        </svg>
+                    </motion.a>
+                </motion.div>
             </section>
 
             <Suspense fallback={<div className="h-2" />}>
@@ -534,106 +458,6 @@ const HomeContent: FC = () => {
                 <AnimatedDivider color="#6B9080" />
             </Suspense>
 
-            {/* Skills Section */}
-            <section className="py-20 px-4 bg-white dark:bg-gray-800 transition-colors duration-300">
-                <div className="max-w-6xl mx-auto">
-                    <motion.div
-                        {...(prefersReducedMotion || !shouldAnimate
-                            ? {}
-                            : {
-                                  initial: { opacity: 0 },
-                                  whileInView: { opacity: 1 },
-                                  viewport: { once: true, margin: '50px' },
-                                  transition: { duration: 0.6, ease: 'easeOut' },
-                              })}
-                        className="text-center mb-16"
-                    >
-                        <h2 className="text-4xl font-display font-bold text-earth dark:text-gray-100 mb-4">
-                            Skills & Technologies
-                        </h2>
-                        <p className="text-earth/70 dark:text-gray-300 text-lg">
-                            Tools and technologies I work with regularly
-                        </p>
-                    </motion.div>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {SKILL_CATEGORIES.map((category, index) => (
-                            <motion.div
-                                key={category.title}
-                                {...(prefersReducedMotion || !shouldAnimate
-                                    ? {}
-                                    : {
-                                          initial: { opacity: 0 },
-                                          whileInView: { opacity: 1 },
-                                          viewport: { once: true, margin: '50px' },
-                                          transition: {
-                                              duration: 0.6,
-                                              delay: index * 0.1,
-                                              ease: 'easeOut',
-                                          },
-                                      })}
-                                className="bg-cream dark:bg-gray-900 p-8 rounded-xl border border-sage/20 dark:border-gray-700"
-                            >
-                                <h3 className="text-2xl font-bold text-earth dark:text-gray-100 mb-4">
-                                    {category.title}
-                                </h3>
-                                <Suspense
-                                    fallback={
-                                        <ul className="space-y-2">
-                                            {category.skills.map((skill) => (
-                                                <li
-                                                    key={skill}
-                                                    className="flex items-center gap-2 text-earth/70 dark:text-gray-300"
-                                                >
-                                                    <svg
-                                                        className="w-4 h-4 text-accent"
-                                                        fill="currentColor"
-                                                        viewBox="0 0 20 20"
-                                                    >
-                                                        <path
-                                                            fillRule="evenodd"
-                                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                            clipRule="evenodd"
-                                                        />
-                                                    </svg>
-                                                    {skill}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    }
-                                >
-                                    <StaggeredList className="space-y-2" staggerDelay={0.1}>
-                                        {category.skills.map((skill) => (
-                                            <li
-                                                key={skill}
-                                                className="flex items-center gap-2 text-earth/70 dark:text-gray-300"
-                                            >
-                                                <svg
-                                                    className="w-4 h-4 text-accent"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 20 20"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                                {skill}
-                                            </li>
-                                        ))}
-                                    </StaggeredList>
-                                </Suspense>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            <Suspense fallback={<div className="h-2" />}>
-                <AnimatedDivider color="#6B9080" />
-            </Suspense>
-
             {/* CTA Section */}
             <section className="py-20 px-4 bg-gradient-to-br from-secondary-light via-primary-light to-earth-light dark:from-gray-800 dark:via-gray-900 dark:to-gray-950 text-white transition-colors duration-300">
                 <div className="max-w-4xl mx-auto text-center">
@@ -651,8 +475,8 @@ const HomeContent: FC = () => {
                             Let&apos;s Build Something Together
                         </h2>
                         <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                            I&apos;m currently seeking internship and full-time opportunities.
-                            Interested in collaborating or have a project in mind?
+                            I&apos;m graduating in December 2026 and looking for full-time software
+                            engineering roles. Have a role or project in mind?
                         </p>
                         <motion.a
                             href="/contact"
